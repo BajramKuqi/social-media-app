@@ -68,4 +68,20 @@ public class PostController {
         });
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/following")
+    public ResponseEntity<Page<PostResponse>> getFollowingFeed(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        User currentUser = getCurrentUser();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> posts = postRepository.findFollowingFeed(currentUser, pageable);
+        Page<PostResponse> response = posts.map(post -> {
+            long likeCount = likeRepository.countByPost(post);
+            boolean liked = likeRepository.existsByUserAndPost(currentUser, post);
+            long commentCount = commentRepository.countByPost(post);
+            return PostResponse.fromEntity(post, likeCount, liked, commentCount);
+        });
+        return ResponseEntity.ok(response);
+    }
 }
