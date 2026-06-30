@@ -10,9 +10,10 @@ public class PostResponse {
     private Instant createdAt;
     private long likeCount;
     private boolean likedByCurrentUser;
+    private long commentCount;
 
     public PostResponse(Long id, String caption, String imageUrl, String authorUsername,
-                        Instant createdAt, long likeCount, boolean likedByCurrentUser) {
+                        Instant createdAt, long likeCount, boolean likedByCurrentUser, long commentCount) {
         this.id = id;
         this.caption = caption;
         this.imageUrl = imageUrl;
@@ -20,9 +21,10 @@ public class PostResponse {
         this.createdAt = createdAt;
         this.likeCount = likeCount;
         this.likedByCurrentUser = likedByCurrentUser;
+        this.commentCount = commentCount;
     }
 
-    public static PostResponse fromEntity(Post post, long likeCount, boolean likedByCurrentUser) {
+    public static PostResponse fromEntity(Post post, long likeCount, boolean likedByCurrentUser, long commentCount) {
         return new PostResponse(
                 post.getId(),
                 post.getCaption(),
@@ -30,7 +32,8 @@ public class PostResponse {
                 post.getAuthor().getUsername(),
                 post.getCreatedAt(),
                 likeCount,
-                likedByCurrentUser
+                likedByCurrentUser,
+                commentCount
         );
     }
 
@@ -60,5 +63,9 @@ public class PostResponse {
 
     public boolean isLikedByCurrentUser() {
         return likedByCurrentUser;
+    }
+
+    public long getCommentCount() {
+        return commentCount;
     }
 }

@@ -1,5 +1,6 @@
 package com.bajram.socialapi.post;
 
+import com.bajram.socialapi.comment.CommentRepository;
 import com.bajram.socialapi.like.LikeRepository;
 import com.bajram.socialapi.storage.FileStorageService;
 import com.bajram.socialapi.user.User;
@@ -20,13 +21,16 @@ public class PostController {
     private final UserRepository userRepository;
     private final FileStorageService fileStorageService;
     private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
     public PostController(PostRepository postRepository, UserRepository userRepository,
-                          FileStorageService fileStorageService, LikeRepository likeRepository) {
+                          FileStorageService fileStorageService, LikeRepository likeRepository,
+                          CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.fileStorageService = fileStorageService;
         this.likeRepository = likeRepository;
+        this.commentRepository = commentRepository;
     }
 
     private User getCurrentUser() {
@@ -46,7 +50,7 @@ public class PostController {
         String imageUrl = fileStorageService.uploadFile(image);
         Post post = new Post(caption, imageUrl, author);
         Post saved = postRepository.save(post);
-        return ResponseEntity.status(HttpStatus.CREATED).body(PostResponse.fromEntity(saved, 0, false));
+        return ResponseEntity.status(HttpStatus.CREATED).body(PostResponse.fromEntity(saved, 0, false, 0));
     }
 
     @GetMapping
@@ -59,7 +63,8 @@ public class PostController {
         Page<PostResponse> response = posts.map(post -> {
             long likeCount = likeRepository.countByPost(post);
             boolean liked = likeRepository.existsByUserAndPost(currentUser, post);
-            return PostResponse.fromEntity(post, likeCount, liked);
+            long commentCount = commentRepository.countByPost(post);
+            return PostResponse.fromEntity(post, likeCount, liked, commentCount);
         });
         return ResponseEntity.ok(response);
     }
