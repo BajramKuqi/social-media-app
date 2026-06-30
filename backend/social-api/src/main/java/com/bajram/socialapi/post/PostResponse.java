@@ -3,28 +3,34 @@ package com.bajram.socialapi.post;
 import java.time.Instant;
 
 public class PostResponse {
-
     private Long id;
     private String caption;
     private String imageUrl;
     private String authorUsername;
     private Instant createdAt;
+    private long likeCount;
+    private boolean likedByCurrentUser;
 
-    public PostResponse(Long id, String caption, String imageUrl, String authorUsername, Instant createdAt) {
+    public PostResponse(Long id, String caption, String imageUrl, String authorUsername,
+                        Instant createdAt, long likeCount, boolean likedByCurrentUser) {
         this.id = id;
         this.caption = caption;
         this.imageUrl = imageUrl;
         this.authorUsername = authorUsername;
         this.createdAt = createdAt;
+        this.likeCount = likeCount;
+        this.likedByCurrentUser = likedByCurrentUser;
     }
 
-    public static PostResponse fromEntity(Post post) {
+    public static PostResponse fromEntity(Post post, long likeCount, boolean likedByCurrentUser) {
         return new PostResponse(
                 post.getId(),
                 post.getCaption(),
                 post.getImageUrl(),
                 post.getAuthor().getUsername(),
-                post.getCreatedAt()
+                post.getCreatedAt(),
+                likeCount,
+                likedByCurrentUser
         );
     }
 
@@ -46,5 +52,13 @@ public class PostResponse {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public long getLikeCount() {
+        return likeCount;
+    }
+
+    public boolean isLikedByCurrentUser() {
+        return likedByCurrentUser;
     }
 }

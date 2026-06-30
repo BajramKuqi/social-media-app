@@ -1,8 +1,9 @@
 package com.bajram.socialapi.post;
 
+import com.bajram.socialapi.like.LikeRepository;
+import com.bajram.socialapi.storage.FileStorageService;
 import com.bajram.socialapi.user.User;
 import com.bajram.socialapi.user.UserRepository;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,38 +11,56 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/posts")
 public class PostController {
-
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final FileStorageService fileStorageService;
+    private final LikeRepository likeRepository;
 
-    public PostController(PostRepository postRepository, UserRepository userRepository) {
+    public PostController(PostRepository postRepository, UserRepository userRepository,
+                          FileStorageService fileStorageService, LikeRepository likeRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.fileStorageService = fileStorageService;
+        this.likeRepository = likeRepository;
     }
 
-    @PostMapping
-    public ResponseEntity<PostResponse> createPost(@Valid @RequestBody CreatePostRequest request) {
+    private User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User author = userRepository.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+    }
 
-        Post post = new Post(request.getCaption(), request.getImageUrl(), author);
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<PostResponse> createPost(
+            @RequestParam("image") MultipartFile image,
+            @RequestParam(value = "caption", required = false) String caption) {
+        if (image.isEmpty()) {
+            throw new IllegalArgumentException("An image is required to create a post");
+        }
+        User author = getCurrentUser();
+        String imageUrl = fileStorageService.uploadFile(image);
+        Post post = new Post(caption, imageUrl, author);
         Post saved = postRepository.save(post);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(PostResponse.fromEntity(saved));
+        return ResponseEntity.status(HttpStatus.CREATED).body(PostResponse.fromEntity(saved, 0, false));
     }
 
     @GetMapping
     public ResponseEntity<Page<PostResponse>> getFeed(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
+        User currentUser = getCurrentUser();
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
-        Page<PostResponse> response = posts.map(PostResponse::fromEntity);
+        Page<PostResponse> response = posts.map(post -> {
+            long likeCount = likeRepository.countByPost(post);
+            boolean liked = likeRepository.existsByUserAndPost(currentUser, post);
+            return PostResponse.fromEntity(post, likeCount, liked);
+        });
         return ResponseEntity.ok(response);
     }
 }
