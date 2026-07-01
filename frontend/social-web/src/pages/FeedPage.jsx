@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getFeed, getFollowingFeed } from '../api/posts'
 import PostCard from '../components/PostCard'
 import CreatePostModal from '../components/CreatePostModal'
+import StoryTray from '../components/StoryTray'
 
 function FeedPage() {
   const [posts, setPosts] = useState([])
@@ -49,6 +50,7 @@ function FeedPage() {
   return (
       <div className="min-h-screen bg-gray-50 px-4 py-6">
         <div className="max-w-md mx-auto flex flex-col gap-4">
+          <StoryTray />
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
               <button
