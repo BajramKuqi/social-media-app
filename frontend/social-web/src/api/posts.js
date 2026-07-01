@@ -21,3 +21,14 @@ export async function likePost(postId) {
 export async function unlikePost(postId) {
   await apiClient.delete(`/posts/${postId}/like`)
 }
+export async function createPost(imageFile, caption) {
+  const formData = new FormData()
+  formData.append('image', imageFile)
+  if (caption) {
+    formData.append('caption', caption)
+  }
+  const response = await apiClient.post('/posts', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return response.data
+}
