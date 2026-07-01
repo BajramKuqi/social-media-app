@@ -32,3 +32,7 @@ export async function createPost(imageFile, caption) {
   })
   return response.data
 }
+export async function getLikes(postId) {
+  const response = await apiClient.get(`/posts/${postId}/like`)
+  return response.data
+}

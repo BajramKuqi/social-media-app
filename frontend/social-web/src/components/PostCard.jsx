@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { likePost, unlikePost } from '../api/posts'
 import { getComments, createComment, deleteComment } from '../api/comments'
 import { useAuth } from '../context/AuthContext'
+import { Link } from 'react-router-dom'
 
 function PostCard({ post }) {
   const [liked, setLiked] = useState(post.likedByCurrentUser)
@@ -79,7 +80,9 @@ function PostCard({ post }) {
   return (
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="px-4 py-3 border-b border-gray-100">
-          <span className="font-medium text-gray-800">{post.authorUsername}</span>
+          <Link to={`/profile/${post.authorUsername}`} className="font-medium text-gray-800 hover:text-purple-600">
+            {post.authorUsername}
+          </Link>
         </div>
         <img
             src={post.imageUrl}
@@ -107,7 +110,9 @@ function PostCard({ post }) {
 
           {post.caption && (
               <p className="text-gray-700 text-sm">
-                <span className="font-medium">{post.authorUsername}</span>{' '}
+                <Link to={`/profile/${post.authorUsername}`} className="font-medium hover:text-purple-600">
+                  {post.authorUsername}
+                </Link>{' '}
                 {post.caption}
               </p>
           )}
@@ -120,7 +125,9 @@ function PostCard({ post }) {
                 {comments.map((comment) => (
                     <div key={comment.id} className="flex justify-between items-start text-sm">
                       <p className="text-gray-700">
-                        <span className="font-medium">{comment.authorUsername}</span>{' '}
+                        <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-purple-600">
+                          {comment.authorUsername}
+                        </Link>{' '}
                         {comment.content}
                       </p>
                       {comment.authorUsername === username && (
