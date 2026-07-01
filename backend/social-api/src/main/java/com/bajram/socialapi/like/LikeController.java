@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/posts/{postId}/like")
@@ -42,6 +44,15 @@ public class LikeController {
 
         likeRepository.save(new Like(currentUser, post));
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+    @GetMapping
+    public ResponseEntity<List<LikeResponse>> getLikes(@PathVariable Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+        List<LikeResponse> likes = likeRepository.findByPost(post).stream()
+                .map(LikeResponse::fromEntity)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(likes);
     }
 
     @DeleteMapping
