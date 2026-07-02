@@ -20,15 +20,18 @@ public class StoryService {
 
     private final StoryRepository storyRepository;
     private final StoryViewRepository storyViewRepository;
+    private final HighlightItemRepository highlightItemRepository;
     private final FollowRepository followRepository;
     private final FileStorageService fileStorageService;
 
     public StoryService(StoryRepository storyRepository,
-                         StoryViewRepository storyViewRepository,
-                         FollowRepository followRepository,
-                         FileStorageService fileStorageService) {
+                        StoryViewRepository storyViewRepository,
+                        HighlightItemRepository highlightItemRepository,
+                        FollowRepository followRepository,
+                        FileStorageService fileStorageService) {
         this.storyRepository = storyRepository;
         this.storyViewRepository = storyViewRepository;
+        this.highlightItemRepository = highlightItemRepository;
         this.followRepository = followRepository;
         this.fileStorageService = fileStorageService;
     }
@@ -120,6 +123,8 @@ public class StoryService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only delete your own stories");
         }
 
+        storyViewRepository.deleteByStoryId(storyId);
+        highlightItemRepository.deleteByStoryId(storyId);
         storyRepository.delete(story);
     }
 }
