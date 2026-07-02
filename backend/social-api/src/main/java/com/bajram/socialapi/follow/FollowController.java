@@ -66,10 +66,15 @@ public class FollowController {
             @RequestParam(defaultValue = "20") int size) {
         User targetUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        User currentUser = getCurrentUser();
 
         Pageable pageable = PageRequest.of(page, size);
         Page<UserSummaryResponse> response = followRepository.findByFollowing(targetUser, pageable)
-                .map(follow -> UserSummaryResponse.fromEntity(follow.getFollower()));
+                .map(follow -> {
+                    User user = follow.getFollower();
+                    boolean followed = followRepository.existsByFollowerAndFollowing(currentUser, user);
+                    return UserSummaryResponse.fromEntity(user, followed);
+                });
         return ResponseEntity.ok(response);
     }
 
@@ -80,10 +85,27 @@ public class FollowController {
             @RequestParam(defaultValue = "20") int size) {
         User targetUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        User currentUser = getCurrentUser();
 
         Pageable pageable = PageRequest.of(page, size);
         Page<UserSummaryResponse> response = followRepository.findByFollower(targetUser, pageable)
-                .map(follow -> UserSummaryResponse.fromEntity(follow.getFollowing()));
+                .map(follow -> {
+                    User user = follow.getFollowing();
+                    boolean followed = followRepository.existsByFollowerAndFollowing(currentUser, user);
+                    return UserSummaryResponse.fromEntity(user, followed);
+                });
         return ResponseEntity.ok(response);
+    }
+    @DeleteMapping("/remove-follower")
+    public ResponseEntity<Void> removeFollower(@PathVariable Long userId) {
+        User currentUser = getCurrentUser();
+        User followerUser = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Follow follow = followRepository.findByFollowerAndFollowing(followerUser, currentUser)
+                .orElseThrow(() -> new RuntimeException("Follow relationship not found"));
+
+        followRepository.delete(follow);
+        return ResponseEntity.noContent().build();
     }
 }
