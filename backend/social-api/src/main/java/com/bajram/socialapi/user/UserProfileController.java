@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bajram.socialapi.follow.UserSummaryResponse;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.bajram.socialapi.story.HighlightService;
+import com.bajram.socialapi.story.HighlightSummaryResponse;
 
 @RestController
 @RequestMapping("/users")
@@ -27,17 +29,20 @@ public class UserProfileController {
     private final FollowRepository followRepository;
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
+    private final HighlightService highlightService;
 
     private final FileStorageService fileStorageService;
 
     public UserProfileController(UserRepository userRepository, PostRepository postRepository,
                                  FollowRepository followRepository, LikeRepository likeRepository,
-                                 CommentRepository commentRepository, FileStorageService fileStorageService) {
+                                 CommentRepository commentRepository, HighlightService highlightService,
+                                 FileStorageService fileStorageService) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.followRepository = followRepository;
         this.likeRepository = likeRepository;
         this.commentRepository = commentRepository;
+        this.highlightService = highlightService;
         this.fileStorageService = fileStorageService;
     }
 
@@ -64,6 +69,13 @@ public class UserProfileController {
         );
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/{username}/highlights")
+    public ResponseEntity<List<HighlightSummaryResponse>> getUserHighlights(@PathVariable String username) {
+        User targetUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(highlightService.getHighlights(targetUser));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<List<UserSummaryResponse>> searchUsers(@RequestParam String query) {
         List<UserSummaryResponse> results = userRepository
