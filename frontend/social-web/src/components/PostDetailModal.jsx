@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { getLikes, likePost, unlikePost } from '../api/posts'
+import { getLikes, likePost, unlikePost, deletePost } from '../api/posts'
 import { getComments, createComment, deleteComment } from '../api/comments'
 import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 
-function PostDetailModal({ post, onClose }) {
+function PostDetailModal({ post, onClose, onPostDeleted }) {
     const { username } = useAuth()
+    const isOwnPost = post.authorUsername === username
 
     const [liked, setLiked] = useState(post.likedByCurrentUser)
     const [likeCount, setLikeCount] = useState(post.likeCount)
@@ -21,6 +22,9 @@ function PostDetailModal({ post, onClose }) {
     const [likers, setLikers] = useState([])
     const [likersLoading, setLikersLoading] = useState(false)
     const [likersLoaded, setLikersLoaded] = useState(false)
+
+    const [showMenu, setShowMenu] = useState(false)
+    const [deletingPost, setDeletingPost] = useState(false)
 
     useEffect(() => {
         let cancelled = false
@@ -106,6 +110,23 @@ function PostDetailModal({ post, onClose }) {
         }
     }
 
+    async function handleDeletePost() {
+        if (deletingPost) return
+        const confirmed = window.confirm('Delete this post? This cannot be undone.')
+        if (!confirmed) return
+        setDeletingPost(true)
+        try {
+            await deletePost(post.id)
+            onPostDeleted && onPostDeleted(post.id)
+            onClose()
+        } catch (err) {
+            console.error('Failed to delete post', err)
+            alert('Failed to delete post. Please try again.')
+        } finally {
+            setDeletingPost(false)
+        }
+    }
+
     return (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl h-[80vh] flex overflow-hidden">
@@ -122,12 +143,36 @@ function PostDetailModal({ post, onClose }) {
                 <div className="w-1/2 flex flex-col">
                     <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
                         <span className="font-medium text-gray-800">{post.authorUsername}</span>
-                        <button
-                            onClick={onClose}
-                            className="text-gray-400 hover:text-gray-600 text-lg leading-none"
-                        >
-                            ✕
-                        </button>
+                        <div className="flex items-center gap-3">
+                            {isOwnPost && (
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setShowMenu((prev) => !prev)}
+                                        className="text-gray-400 hover:text-gray-600 text-xl leading-none px-1"
+                                        aria-label="Post options"
+                                    >
+                                        &#8942;
+                                    </button>
+                                    {showMenu && (
+                                        <div className="absolute top-7 right-0 bg-white rounded-lg shadow-lg overflow-hidden w-36 text-left z-10">
+                                            <button
+                                                onClick={handleDeletePost}
+                                                disabled={deletingPost}
+                                                className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-50"
+                                            >
+                                                {deletingPost ? 'Deleting...' : 'Delete Post'}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            <button
+                                onClick={onClose}
+                                className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+                            >
+                                ?
+                            </button>
+                        </div>
                     </div>
 
                     {post.caption && (
@@ -153,7 +198,7 @@ function PostDetailModal({ post, onClose }) {
                                 tab === 'likes' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-400'
                             }`}
                         >
-                            Likes · {likeCount}
+                            Likes � {likeCount}
                         </button>
                     </div>
 
@@ -164,24 +209,27 @@ function PostDetailModal({ post, onClose }) {
                                 {!commentsLoading && comments.length === 0 && (
                                     <p className="text-gray-400 text-sm">No comments yet.</p>
                                 )}
-                                {!commentsLoading && comments.map((comment) => (
-                                    <div key={comment.id} className="flex justify-between items-start text-sm mb-2">
-                                        <p className="text-gray-700">
-                                            <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-purple-600">
-                                                {comment.authorUsername}
-                                            </Link>{' '}
-                                            {comment.content}
-                                        </p>
-                                        {comment.authorUsername === username && (
-                                            <button
-                                                onClick={() => handleDeleteComment(comment.id)}
-                                                className="text-gray-300 hover:text-red-500 text-xs ml-2 shrink-0"
-                                            >
-                                                delete
-                                            </button>
-                                        )}
-                                    </div>
-                                ))}
+                                {!commentsLoading && comments.map((comment) => {
+                                    const canDelete = comment.authorUsername === username || isOwnPost
+                                    return (
+                                        <div key={comment.id} className="flex justify-between items-start text-sm mb-2">
+                                            <p className="text-gray-700">
+                                                <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-purple-600">
+                                                    {comment.authorUsername}
+                                                </Link>{' '}
+                                                {comment.content}
+                                            </p>
+                                            {canDelete && (
+                                                <button
+                                                    onClick={() => handleDeleteComment(comment.id)}
+                                                    className="text-gray-300 hover:text-red-500 text-xs ml-2 shrink-0"
+                                                >
+                                                    delete
+                                                </button>
+                                            )}
+                                        </div>
+                                    )
+                                })}
                             </>
                         )}
 
@@ -212,7 +260,7 @@ function PostDetailModal({ post, onClose }) {
                                 liked ? 'text-purple-600' : 'text-gray-500'
                             } hover:text-purple-600 disabled:opacity-50`}
                         >
-                            {liked ? 'Liked' : 'Like'} · {likeCount}
+                            {liked ? 'Liked' : 'Like'} � {likeCount}
                         </button>
 
                         {tab === 'comments' && (

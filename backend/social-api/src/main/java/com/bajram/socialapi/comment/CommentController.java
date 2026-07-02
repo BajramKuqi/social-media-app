@@ -66,7 +66,10 @@ public class CommentController {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
-        if (!comment.getUser().getId().equals(currentUser.getId())) {
+        boolean isCommentAuthor = comment.getUser().getId().equals(currentUser.getId());
+        boolean isPostOwner = comment.getPost().getAuthor().getId().equals(currentUser.getId());
+
+        if (!isCommentAuthor && !isPostOwner) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 

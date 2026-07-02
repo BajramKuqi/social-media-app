@@ -84,4 +84,19 @@ public class PostController {
         });
         return ResponseEntity.ok(response);
     }
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+        User currentUser = getCurrentUser();
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        if (!post.getAuthor().getId().equals(currentUser.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        likeRepository.deleteByPost(post);
+        commentRepository.deleteByPost(post);
+        postRepository.delete(post);
+        return ResponseEntity.noContent().build();
+    }
 }
