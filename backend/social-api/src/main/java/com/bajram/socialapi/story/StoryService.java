@@ -20,18 +20,15 @@ public class StoryService {
 
     private final StoryRepository storyRepository;
     private final StoryViewRepository storyViewRepository;
-    private final HighlightItemRepository highlightItemRepository;
     private final FollowRepository followRepository;
     private final FileStorageService fileStorageService;
 
     public StoryService(StoryRepository storyRepository,
                         StoryViewRepository storyViewRepository,
-                        HighlightItemRepository highlightItemRepository,
                         FollowRepository followRepository,
                         FileStorageService fileStorageService) {
         this.storyRepository = storyRepository;
         this.storyViewRepository = storyViewRepository;
-        this.highlightItemRepository = highlightItemRepository;
         this.followRepository = followRepository;
         this.fileStorageService = fileStorageService;
     }
@@ -124,7 +121,6 @@ public class StoryService {
         }
 
         storyViewRepository.deleteByStoryId(storyId);
-        highlightItemRepository.deleteByStoryId(storyId);
         storyRepository.delete(story);
     }
 }

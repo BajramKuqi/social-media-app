@@ -23,3 +23,10 @@ export async function getHighlightDetail(highlightId) {
 export async function deleteHighlight(highlightId) {
     await apiClient.delete(`/highlights/${highlightId}`)
 }
+export async function getHighlightsForUser(username) {
+    const response = await apiClient.get(`/users/${username}/highlights`)
+    return response.data
+}
+export async function deleteHighlightItem(highlightId, itemId) {
+    await apiClient.delete(`/highlights/${highlightId}/stories/${itemId}`)
+}

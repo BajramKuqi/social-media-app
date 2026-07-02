@@ -1,4 +1,3 @@
-
 package com.bajram.socialapi.story;
 
 import com.bajram.socialapi.user.User;
@@ -59,13 +58,13 @@ public class HighlightService {
         return toSummary(highlight);
     }
 
-    public HighlightDetailResponse getHighlightDetail(User owner, Long highlightId) {
-        Highlight highlight = highlightRepository.findByIdAndOwnerId(highlightId, owner.getId())
+    public HighlightDetailResponse getHighlightDetail(Long highlightId) {
+        Highlight highlight = highlightRepository.findById(highlightId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Highlight not found"));
 
         List<HighlightStoryResponse> stories = highlightItemRepository.findByHighlightIdOrderByAddedAtAsc(highlightId)
                 .stream()
-                .map(item -> HighlightStoryResponse.from(item.getStory()))
+                .map(HighlightStoryResponse::from)
                 .collect(Collectors.toList());
 
         return new HighlightDetailResponse(highlight.getId(), highlight.getTitle(), stories);
@@ -79,6 +78,25 @@ public class HighlightService {
         highlightRepository.delete(highlight);
     }
 
+    public void deleteHighlightItem(User owner, Long highlightId, Long itemId) {
+        Highlight highlight = highlightRepository.findByIdAndOwnerId(highlightId, owner.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Highlight not found"));
+
+        HighlightItem item = highlightItemRepository.findById(itemId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Highlight item not found"));
+
+        if (!item.getHighlight().getId().equals(highlight.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Item does not belong to this highlight");
+        }
+
+        highlightItemRepository.delete(item);
+
+        long remaining = highlightItemRepository.countByHighlightId(highlight.getId());
+        if (remaining == 0) {
+            highlightRepository.delete(highlight);
+        }
+    }
+
     private void addStoryInternal(Highlight highlight, Story story) {
         boolean alreadyAdded = highlightItemRepository.existsByHighlightIdAndStoryId(highlight.getId(), story.getId());
         if (alreadyAdded) {
@@ -86,7 +104,10 @@ public class HighlightService {
         }
         HighlightItem item = new HighlightItem();
         item.setHighlight(highlight);
-        item.setStory(story);
+        item.setStoryId(story.getId());
+        item.setMediaUrl(story.getMediaUrl());
+        item.setMediaType(story.getMediaType());
+        item.setCaption(story.getCaption());
         highlightItemRepository.save(item);
     }
 
@@ -103,7 +124,7 @@ public class HighlightService {
 
     private HighlightSummaryResponse toSummary(Highlight highlight) {
         List<HighlightItem> items = highlightItemRepository.findByHighlightIdOrderByAddedAtAsc(highlight.getId());
-        String coverImageUrl = items.isEmpty() ? null : items.get(0).getStory().getMediaUrl();
+        String coverImageUrl = items.isEmpty() ? null : items.get(0).getMediaUrl();
         return new HighlightSummaryResponse(highlight.getId(), highlight.getTitle(), coverImageUrl, items.size());
     }
 }

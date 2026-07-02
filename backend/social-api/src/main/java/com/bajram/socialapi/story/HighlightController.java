@@ -57,14 +57,21 @@ public class HighlightController {
 
     @GetMapping("/{highlightId}")
     public ResponseEntity<HighlightDetailResponse> getHighlightDetail(@PathVariable Long highlightId) {
-        User currentUser = getCurrentUser();
-        return ResponseEntity.ok(highlightService.getHighlightDetail(currentUser, highlightId));
+        return ResponseEntity.ok(highlightService.getHighlightDetail(highlightId));
     }
 
     @DeleteMapping("/{highlightId}")
     public ResponseEntity<Void> deleteHighlight(@PathVariable Long highlightId) {
         User currentUser = getCurrentUser();
         highlightService.deleteHighlight(currentUser, highlightId);
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/{highlightId}/stories/{itemId}")
+    public ResponseEntity<Void> deleteHighlightItem(
+            @PathVariable Long highlightId,
+            @PathVariable Long itemId) {
+        User currentUser = getCurrentUser();
+        highlightService.deleteHighlightItem(currentUser, highlightId, itemId);
         return ResponseEntity.noContent().build();
     }
 }
