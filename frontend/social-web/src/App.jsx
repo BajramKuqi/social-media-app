@@ -6,6 +6,7 @@ import ProfilePage from './pages/ProfilePage'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 import UserSearch from './components/UserSearch'
+import NotificationBell from './components/NotificationBell'
 
 function Navbar() {
     const { isAuthenticated, logoutUser, username } = useAuth()
@@ -15,6 +16,7 @@ function Navbar() {
             {isAuthenticated && (
                 <div className="flex items-center gap-4">
                     <UserSearch />
+                    <NotificationBell />
                     <Link to={`/profile/${username}`} className="text-sm text-gray-600 hover:text-purple-600">
                         {username}
                     </Link>
@@ -29,7 +31,6 @@ function Navbar() {
         </nav>
     )
 }
-
 function App() {
     return (
         <BrowserRouter>
@@ -57,5 +58,4 @@ function App() {
         </BrowserRouter>
     )
 }
-
 export default App

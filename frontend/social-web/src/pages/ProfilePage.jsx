@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useSearchParams } from 'react-router-dom'
 import { followUser, unfollowUser } from '../api/follow'
 import { useAuth } from '../context/AuthContext'
 import { getUserProfile, getUserPosts, updateAvatar, removeAvatar } from '../api/users'
@@ -26,6 +26,7 @@ function ProfilePage() {
     const [highlightLoading, setHighlightLoading] = useState(false)
     const [followListMode, setFollowListMode] = useState(null)
     const [showAvatarMenu, setShowAvatarMenu] = useState(false)
+    const [searchParams, setSearchParams] = useSearchParams()
 
     useEffect(() => {
         let cancelled = false
@@ -54,6 +55,14 @@ function ProfilePage() {
             cancelled = true
         }
     }, [username])
+    useEffect(() => {
+        const postId = searchParams.get('post')
+        if (!postId || posts.length === 0) return
+        const match = posts.find((p) => String(p.id) === postId)
+        if (match) {
+            setSelectedPost(match)
+        }
+    }, [searchParams, posts])
 
     async function handleFollowToggle() {
         if (!profile || followBusy) return
@@ -276,7 +285,13 @@ function ProfilePage() {
                 {selectedPost && (
                     <PostDetailModal
                         post={selectedPost}
-                        onClose={() => setSelectedPost(null)}
+                        onClose={() => {
+                            setSelectedPost(null)
+                            if (searchParams.get('post')) {
+                                searchParams.delete('post')
+                                setSearchParams(searchParams)
+                            }
+                        }}
                         onPostDeleted={(postId) => {
                             setPosts((prev) => prev.filter((p) => p.id !== postId))
                             setProfile((prev) => prev && ({ ...prev, postCount: prev.postCount - 1 }))
