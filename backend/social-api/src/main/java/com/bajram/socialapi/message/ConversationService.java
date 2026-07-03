@@ -132,6 +132,46 @@ public class ConversationService {
         participantRepository.save(participant);
     }
 
+    @Transactional
+    public boolean exitGroup(Conversation conversation, User user) {
+        if (!conversation.isGroup()) {
+            throw new IllegalStateException("Cannot exit a direct conversation");
+        }
+        ConversationParticipant participant = participantRepository.findByConversationAndUser(conversation, user)
+                .orElseThrow(() -> new RuntimeException("Not a participant"));
+        participantRepository.delete(participant);
+
+        long remaining = participantRepository.findByConversation(conversation).size();
+        if (remaining == 0) {
+            messageRepository.deleteByConversation(conversation);
+            conversationRepository.delete(conversation);
+            return true;
+        }
+        createSystemMessage(conversation, user, user.getUsername() + " left the group");
+        return false;
+    }
+
+    @Transactional
+    public void addMemberToGroup(Conversation conversation, User currentUser, User newMember) {
+        if (!conversation.isGroup()) {
+            throw new IllegalStateException("Cannot add members to a direct conversation");
+        }
+        if (!isParticipant(conversation, currentUser)) {
+            throw new SecurityException("Not authorized");
+        }
+        if (isParticipant(conversation, newMember)) {
+            return;
+        }
+        participantRepository.save(new ConversationParticipant(conversation, newMember));
+        createSystemMessage(conversation, currentUser, currentUser.getUsername() + " added " + newMember.getUsername());
+    }
+
+    @Transactional
+    public MessageDto createSystemMessage(Conversation conversation, User actingUser, String content) {
+        Message saved = messageRepository.save(new Message(conversation, actingUser, content, MessageType.SYSTEM));
+        return MessageDto.fromEntity(saved);
+    }
+
     private Optional<ConversationSummaryDto> toSummary(ConversationParticipant membership, User currentUser) {
         Conversation conversation = membership.getConversation();
         Optional<Message> lastMessage = messageRepository.findTopByConversationOrderByCreatedAtDesc(conversation);

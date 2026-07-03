@@ -33,6 +33,10 @@ public class Message {
         this.createdAt = Instant.now();
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private MessageType type = MessageType.CHAT;
+
     public Message() {}
 
     public Message(Conversation conversation, User sender, String content) {
@@ -41,9 +45,17 @@ public class Message {
         this.content = content;
     }
 
+    public Message(Conversation conversation, User sender, String content, MessageType type) {
+        this.conversation = conversation;
+        this.sender = sender;
+        this.content = content;
+        this.type = type;
+    }
+
     public Long getId() { return id; }
     public Conversation getConversation() { return conversation; }
     public User getSender() { return sender; }
     public String getContent() { return content; }
     public Instant getCreatedAt() { return createdAt; }
+    public MessageType getType() { return type; }
 }

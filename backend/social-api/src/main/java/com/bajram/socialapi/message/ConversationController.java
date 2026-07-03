@@ -120,6 +120,39 @@ public class ConversationController {
         conversationService.clearConversationForUser(conversation, currentUser);
         return ResponseEntity.noContent().build();
     }
+    public record AddMemberRequest(Long userId) {}
+
+    @PostMapping("/{conversationId}/exit")
+    public ResponseEntity<Map<String, Boolean>> exitGroup(@PathVariable Long conversationId) {
+        User currentUser = getCurrentUser();
+        Conversation conversation = getConversationOrThrow(conversationId);
+        if (!conversationService.isParticipant(conversation, currentUser)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        try {
+            boolean deleted = conversationService.exitGroup(conversation, currentUser);
+            return ResponseEntity.ok(Map.of("conversationDeleted", deleted));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PostMapping("/{conversationId}/members")
+    public ResponseEntity<Void> addMember(@PathVariable Long conversationId, @RequestBody AddMemberRequest request) {
+        User currentUser = getCurrentUser();
+        Conversation conversation = getConversationOrThrow(conversationId);
+        if (!conversationService.isParticipant(conversation, currentUser)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        User newMember = userRepository.findById(request.userId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            conversationService.addMemberToGroup(conversation, currentUser, newMember);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 
     // lightweight poll: only messages newer than afterId, for fast refresh of an open chat
     @GetMapping("/{conversationId}/messages/poll")

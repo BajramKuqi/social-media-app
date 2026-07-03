@@ -18,4 +18,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     Page<Message> findByConversationAndCreatedAtAfterOrderByCreatedAtDesc(
             Conversation conversation, Instant after, Pageable pageable);
+    void deleteByConversation(Conversation conversation);
 }
