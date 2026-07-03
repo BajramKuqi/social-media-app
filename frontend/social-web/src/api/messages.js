@@ -58,3 +58,10 @@ export async function deleteMessage(messageId) {
 export async function deleteConversation(conversationId) {
     await apiClient.delete(`/conversations/${conversationId}`)
 }
+export async function exitGroup(conversationId) {
+    const response = await apiClient.post(`/conversations/${conversationId}/exit`)
+    return response.data
+}
+export async function addGroupMember(conversationId, userId) {
+    await apiClient.post(`/conversations/${conversationId}/members`, { userId })
+}

@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { searchUsers } from '../api/users'
 import {
     getMessages,
     pollMessages,
     sendMessage,
     sendDirectMessage,
     getDirectConversation,
+    getConversations,
     markConversationAsRead,
     deleteMessage,
     deleteConversation,
+    exitGroup,
+    addGroupMember,
 } from '../api/messages'
 
 const POLL_INTERVAL_MS = 3000
@@ -23,6 +27,7 @@ function ConversationPage() {
         conversationId ? Number(conversationId) : null
     )
     const [otherUsername, setOtherUsername] = useState(null)
+    const [isGroupChat, setIsGroupChat] = useState(false)
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -31,6 +36,31 @@ function ConversationPage() {
     const bottomRef = useRef(null)
     const lastMessageIdRef = useRef(null)
     const [showMenu, setShowMenu] = useState(false)
+
+    // add-member popover state
+    const [showAddMember, setShowAddMember] = useState(false)
+    const [addQuery, setAddQuery] = useState('')
+    const [addResults, setAddResults] = useState([])
+    const [adding, setAdding] = useState(false)
+
+    // figure out whether this is a group chat + its display name
+    useEffect(() => {
+        if (!resolvedConversationId) return
+        let cancelled = false
+        getConversations()
+            .then((list) => {
+                if (cancelled) return
+                const match = list.find((c) => c.id === resolvedConversationId)
+                if (match) {
+                    setIsGroupChat(match.group)
+                    setOtherUsername(match.displayName)
+                }
+            })
+            .catch((err) => console.error('Failed to load conversation meta', err))
+        return () => {
+            cancelled = true
+        }
+    }, [resolvedConversationId])
 
     // initial load
     useEffect(() => {
@@ -63,7 +93,6 @@ function ConversationPage() {
                         }
                         await markConversationAsRead(existing.id)
                     }
-                    // if no existing conversation: leave messages empty, user starts by typing
                 }
             } catch (err) {
                 if (!cancelled) setError('Failed to load conversation')
@@ -100,6 +129,25 @@ function ConversationPage() {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
 
+    // debounced user search for the add-member popover
+    useEffect(() => {
+        if (!showAddMember) return
+        const trimmed = addQuery.trim()
+        if (!trimmed) {
+            setAddResults([])
+            return
+        }
+        const timeout = setTimeout(async () => {
+            try {
+                const data = await searchUsers(trimmed)
+                setAddResults(data)
+            } catch (err) {
+                console.error('Search failed', err)
+            }
+        }, 300)
+        return () => clearTimeout(timeout)
+    }, [addQuery, showAddMember])
+
     async function handleSend() {
         const trimmed = input.trim()
         if (!trimmed || sending) return
@@ -121,6 +169,7 @@ function ConversationPage() {
             setSending(false)
         }
     }
+
     async function handleDeleteMessage(messageId) {
         try {
             await deleteMessage(messageId)
@@ -141,24 +190,72 @@ function ConversationPage() {
         }
     }
 
+    async function handleExitGroup() {
+        if (!resolvedConversationId) return
+        if (!window.confirm('Exit this group?')) return
+        try {
+            await exitGroup(resolvedConversationId)
+            navigate('/messages')
+        } catch (err) {
+            console.error('Failed to exit group', err)
+        }
+    }
+
+    async function handleAddMember(user) {
+        if (!resolvedConversationId || adding) return
+        setAdding(true)
+        try {
+            await addGroupMember(resolvedConversationId, user.id)
+            setShowAddMember(false)
+            setAddQuery('')
+            setAddResults([])
+        } catch (err) {
+            console.error('Failed to add member', err)
+        } finally {
+            setAdding(false)
+        }
+    }
+
     const headerName = otherUsername || (conversationId ? '' : userId ? '' : '')
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
             <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
                 <button onClick={() => navigate('/messages')} className="text-gray-500 hover:text-gray-700">
-                    ←
+                    ?
                 </button>
                 <span className="font-medium text-gray-800 flex-1">{headerName || 'Conversation'}</span>
                 {resolvedConversationId && (
                     <div className="relative">
                         <button onClick={() => setShowMenu((prev) => !prev)} className="text-gray-500 hover:text-gray-700 px-2">
-                            ⋯
+                            ?
                         </button>
                         {showMenu && (
                             <>
                                 <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-                                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg overflow-hidden w-40 z-20">
+                                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg overflow-hidden w-44 z-20">
+                                    {isGroupChat && (
+                                        <button
+                                            onClick={() => {
+                                                setShowMenu(false)
+                                                setShowAddMember(true)
+                                            }}
+                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100"
+                                        >
+                                            Add people
+                                        </button>
+                                    )}
+                                    {isGroupChat && (
+                                        <button
+                                            onClick={() => {
+                                                setShowMenu(false)
+                                                handleExitGroup()
+                                            }}
+                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100"
+                                        >
+                                            Exit group
+                                        </button>
+                                    )}
                                     <button
                                         onClick={() => {
                                             setShowMenu(false)
@@ -175,13 +272,62 @@ function ConversationPage() {
                 )}
             </div>
 
+            {showAddMember && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+                    <div className="bg-white rounded-xl w-full max-w-sm p-4 flex flex-col gap-3">
+                        <div className="flex items-center justify-between">
+                            <span className="font-semibold text-gray-800">Add people</span>
+                            <button
+                                onClick={() => {
+                                    setShowAddMember(false)
+                                    setAddQuery('')
+                                    setAddResults([])
+                                }}
+                                className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                        <input
+                            type="text"
+                            value={addQuery}
+                            onChange={(e) => setAddQuery(e.target.value)}
+                            placeholder="Search users..."
+                            className="border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400"
+                        />
+                        <div className="max-h-56 overflow-y-auto flex flex-col">
+                            {addResults.map((u) => (
+                                <button
+                                    key={u.id}
+                                    onClick={() => handleAddMember(u)}
+                                    disabled={adding}
+                                    className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded disabled:opacity-40"
+                                >
+                                    {u.username}
+                                </button>
+                            ))}
+                            {addQuery.trim() && addResults.length === 0 && (
+                                <p className="text-gray-400 text-sm px-3 py-2">No users found</p>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2 max-w-md mx-auto w-full">
                 {loading && <p className="text-gray-400 text-center py-6">Loading...</p>}
                 {error && <p className="text-red-500 text-center py-6">{error}</p>}
                 {!loading && !error && messages.length === 0 && (
-                    <p className="text-gray-400 text-center py-10">Say hello 👋</p>
+                    <p className="text-gray-400 text-center py-10">Say hello ?</p>
                 )}
                 {messages.map((m) => {
+                    if (m.type === 'SYSTEM') {
+                        return (
+                            <div key={m.id} className="text-center text-xs text-gray-400 my-1">
+                                {m.content}
+                            </div>
+                        )
+                    }
                     const isMine = m.senderUsername === username
                     return (
                         <div key={m.id} className={`flex items-center gap-1 group ${isMine ? 'justify-end' : 'justify-start'}`}>
