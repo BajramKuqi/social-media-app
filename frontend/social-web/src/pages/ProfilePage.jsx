@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useParams, Link, useSearchParams } from 'react-router-dom'
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { followUser, unfollowUser } from '../api/follow'
 import { useAuth } from '../context/AuthContext'
 import { getUserProfile, getUserPosts, updateAvatar, removeAvatar } from '../api/users'
@@ -12,6 +12,7 @@ import FollowListModal from '../components/FollowListModal'
 function ProfilePage() {
     const { username } = useParams()
     const { username: currentUsername } = useAuth()
+    const navigate = useNavigate()
 
     const [profile, setProfile] = useState(null)
     const [posts, setPosts] = useState([])
@@ -88,6 +89,11 @@ function ProfilePage() {
         } finally {
             setFollowBusy(false)
         }
+    }
+
+    function handleMessageClick() {
+        if (!profile) return
+        navigate(`/messages/u/${profile.id}`, { state: { username: profile.username } })
     }
 
     async function handleAvatarChange(e) {
@@ -222,17 +228,25 @@ function ProfilePage() {
                             </button>
                         </div>
                         {!isOwnProfile && (
-                            <button
-                                onClick={handleFollowToggle}
-                                disabled={followBusy}
-                                className={`mt-2 px-4 py-1.5 rounded text-sm font-medium disabled:opacity-50 ${
-                                    profile.followedByCurrentUser
-                                        ? 'bg-gray-100 text-gray-700 border border-gray-300'
-                                        : 'bg-purple-600 text-white'
-                                }`}
-                            >
-                                {profile.followedByCurrentUser ? 'Following' : 'Follow'}
-                            </button>
+                            <div className="flex gap-2 mt-2">
+                                <button
+                                    onClick={handleFollowToggle}
+                                    disabled={followBusy}
+                                    className={`px-4 py-1.5 rounded text-sm font-medium disabled:opacity-50 ${
+                                        profile.followedByCurrentUser
+                                            ? 'bg-gray-100 text-gray-700 border border-gray-300'
+                                            : 'bg-purple-600 text-white'
+                                    }`}
+                                >
+                                    {profile.followedByCurrentUser ? 'Following' : 'Follow'}
+                                </button>
+                                <button
+                                    onClick={handleMessageClick}
+                                    className="px-4 py-1.5 rounded text-sm font-medium bg-gray-100 text-gray-700 border border-gray-300"
+                                >
+                                    Message
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
