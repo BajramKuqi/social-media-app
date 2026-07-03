@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.bajram.socialapi.notification.NotificationService;
 
 @RestController
 public class CommentController {
@@ -19,12 +20,14 @@ public class CommentController {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public CommentController(CommentRepository commentRepository, PostRepository postRepository,
-                             UserRepository userRepository) {
+                             UserRepository userRepository, NotificationService notificationService) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     private User getCurrentUser() {
@@ -43,6 +46,7 @@ public class CommentController {
 
         Comment comment = new Comment(request.getContent(), author, post);
         Comment saved = commentRepository.save(comment);
+        notificationService.notifyComment(author, post.getAuthor(), postId, saved.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(CommentResponse.fromEntity(saved));
     }
 

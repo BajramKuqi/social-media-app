@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.bajram.socialapi.notification.NotificationService;
 
 @RestController
 @RequestMapping("/posts/{postId}/like")
@@ -18,12 +19,14 @@ public class LikeController {
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     public LikeController(LikeRepository likeRepository, PostRepository postRepository,
-                          UserRepository userRepository) {
+                          UserRepository userRepository, NotificationService notificationService) {
         this.likeRepository = likeRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     private User getCurrentUser() {
@@ -43,6 +46,7 @@ public class LikeController {
         }
 
         likeRepository.save(new Like(currentUser, post));
+        notificationService.notifyLike(currentUser, post.getAuthor(), postId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
     @GetMapping

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.bajram.socialapi.notification.NotificationService;
 
 @RestController
 @RequestMapping("/users/{userId}")
@@ -16,10 +17,13 @@ public class FollowController {
 
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
-    public FollowController(FollowRepository followRepository, UserRepository userRepository) {
+    public FollowController(FollowRepository followRepository, UserRepository userRepository,
+                            NotificationService notificationService) {
         this.followRepository = followRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     private User getCurrentUser() {
@@ -43,6 +47,7 @@ public class FollowController {
         }
 
         followRepository.save(new Follow(currentUser, targetUser));
+        notificationService.notifyFollow(currentUser, targetUser);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
