@@ -17,13 +17,14 @@ function timeAgo(dateString) {
 }
 
 function notificationText(n) {
+    const isReel = n.reelId != null
     switch (n.type) {
         case 'FOLLOW':
             return 'started following you'
         case 'LIKE':
-            return 'liked your post'
+            return isReel ? 'liked your reel' : 'liked your post'
         case 'COMMENT':
-            return 'commented on your post'
+            return isReel ? 'commented on your reel' : 'commented on your post'
         default:
             return ''
     }
@@ -31,6 +32,7 @@ function notificationText(n) {
 
 function notificationLink(n, currentUsername) {
     if (n.type === 'FOLLOW') return `/profile/${n.actorUsername}`
+    if (n.reelId != null) return `/profile/${currentUsername}?tab=reels&reel=${n.reelId}`
     return `/profile/${currentUsername}?post=${n.postId}`
 }
 

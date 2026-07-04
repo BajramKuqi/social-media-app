@@ -3,7 +3,9 @@ import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { followUser, unfollowUser } from '../api/follow'
 import { useAuth } from '../context/AuthContext'
 import { getUserProfile, getUserPosts, updateAvatar, removeAvatar } from '../api/users'
+import { getUserReels } from '../api/reels'
 import PostDetailModal from '../components/PostDetailModal'
+import ReelDetailModal from '../components/ReelDetailModal'
 import { getHighlightsForUser, getHighlightDetail } from '../api/highlights'
 import HighlightViewer from '../components/HighlightViewer'
 import FollowListModal from '../components/FollowListModal'
@@ -16,11 +18,14 @@ function ProfilePage() {
 
     const [profile, setProfile] = useState(null)
     const [posts, setPosts] = useState([])
+    const [reels, setReels] = useState([])
+    const [activeTab, setActiveTab] = useState('posts') // 'posts' | 'reels'
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
     const [followBusy, setFollowBusy] = useState(false)
     const [avatarUploading, setAvatarUploading] = useState(false)
     const [selectedPost, setSelectedPost] = useState(null)
+    const [selectedReel, setSelectedReel] = useState(null)
     const fileInputRef = useRef(null)
     const [highlights, setHighlights] = useState([])
     const [activeHighlight, setActiveHighlight] = useState(null)
@@ -35,14 +40,16 @@ function ProfilePage() {
             setLoading(true)
             setError('')
             try {
-                const [profileData, postsData, highlightsData] = await Promise.all([
+                const [profileData, postsData, reelsData, highlightsData] = await Promise.all([
                     getUserProfile(username),
                     getUserPosts(username),
+                    getUserReels(username),
                     getHighlightsForUser(username),
                 ])
                 if (!cancelled) {
                     setProfile(profileData)
                     setPosts(postsData.content)
+                    setReels(reelsData.content)
                     setHighlights(highlightsData)
                 }
             } catch (err) {
@@ -148,7 +155,7 @@ function ProfilePage() {
         <div className="min-h-screen bg-gray-50 px-4 py-6">
             <div className="max-w-md mx-auto flex flex-col gap-6">
                 <Link to="/" className="text-sm text-purple-600 hover:underline w-fit">
-                    ? Back to feed
+                    ← Back to feed
                 </Link>
                 <div className="flex items-center gap-4">
                     <div className="relative shrink-0">
@@ -220,6 +227,7 @@ function ProfilePage() {
                         </div>
                         <div className="flex gap-4 mt-1 text-sm text-gray-600">
                             <span><strong>{profile.postCount}</strong> posts</span>
+                            <span><strong>{profile.reelCount}</strong> reels</span>
                             <button onClick={() => setFollowListMode('followers')} className="hover:underline">
                                 <strong>{profile.followerCount}</strong> followers
                             </button>
@@ -276,24 +284,78 @@ function ProfilePage() {
                     </div>
                 )}
 
-                {posts.length === 0 ? (
-                    <p className="text-gray-400 text-center py-10">No posts yet.</p>
-                ) : (
-                    <div className="grid grid-cols-3 gap-1">
-                        {posts.map((post) => (
-                            <button
-                                key={post.id}
-                                onClick={() => setSelectedPost(post)}
-                                className="aspect-square bg-gray-200 overflow-hidden"
-                            >
-                                <img
-                                    src={post.imageUrl}
-                                    alt={post.caption || 'Post'}
-                                    className="w-full h-full object-cover"
-                                />
-                            </button>
-                        ))}
-                    </div>
+                <div className="flex border-t border-b border-gray-200">
+                    <button
+                        onClick={() => setActiveTab('posts')}
+                        className={`flex-1 py-2.5 text-sm font-medium ${
+                            activeTab === 'posts' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-400'
+                        }`}
+                    >
+                        Posts
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('reels')}
+                        className={`flex-1 py-2.5 text-sm font-medium ${
+                            activeTab === 'reels' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-400'
+                        }`}
+                    >
+                        Reels
+                    </button>
+                </div>
+
+                {activeTab === 'posts' && (
+                    posts.length === 0 ? (
+                        <p className="text-gray-400 text-center py-10">No posts yet.</p>
+                    ) : (
+                        <div className="grid grid-cols-3 gap-1">
+                            {posts.map((post) => (
+                                <button
+                                    key={post.id}
+                                    onClick={() => setSelectedPost(post)}
+                                    className="aspect-square bg-gray-200 overflow-hidden"
+                                >
+                                    <img
+                                        src={post.imageUrl}
+                                        alt={post.caption || 'Post'}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    )
+                )}
+
+                {activeTab === 'reels' && (
+                    reels.length === 0 ? (
+                        <p className="text-gray-400 text-center py-10">No reels yet.</p>
+                    ) : (
+                        <div className="grid grid-cols-3 gap-1">
+                            {reels.map((reel) => (
+                                <button
+                                    key={reel.id}
+                                    onClick={() => setSelectedReel(reel)}
+                                    className="aspect-square bg-gray-900 overflow-hidden relative"
+                                >
+                                    {reel.thumbnailUrl ? (
+                                        <img
+                                            src={reel.thumbnailUrl}
+                                            alt={reel.caption || 'Reel'}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <video
+                                            src={reel.videoUrl}
+                                            className="w-full h-full object-cover"
+                                            muted
+                                        />
+                                    )}
+                                    <svg className="absolute top-1 right-1 w-4 h-4 text-white drop-shadow" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                </button>
+                            ))}
+                        </div>
+                    )
                 )}
 
                 {selectedPost && (
@@ -309,6 +371,16 @@ function ProfilePage() {
                         onPostDeleted={(postId) => {
                             setPosts((prev) => prev.filter((p) => p.id !== postId))
                             setProfile((prev) => prev && ({ ...prev, postCount: prev.postCount - 1 }))
+                        }}
+                    />
+                )}
+                {selectedReel && (
+                    <ReelDetailModal
+                        reel={selectedReel}
+                        onClose={() => setSelectedReel(null)}
+                        onReelDeleted={(reelId) => {
+                            setReels((prev) => prev.filter((r) => r.id !== reelId))
+                            setProfile((prev) => prev && ({ ...prev, reelCount: prev.reelCount - 1 }))
                         }}
                     />
                 )}
