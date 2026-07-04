@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class NotificationService {
-
     private final NotificationRepository notificationRepository;
 
     public NotificationService(NotificationRepository notificationRepository) {
@@ -17,23 +16,38 @@ public class NotificationService {
 
     @Transactional
     public void notifyFollow(User actor, User recipient) {
-        if (actor.getId().equals(recipient.getId())) return; // safety, shouldn't happen
+        if (actor.getId().equals(recipient.getId())) return;
         notificationRepository.save(new Notification(recipient, actor, NotificationType.FOLLOW, null, null));
     }
 
     @Transactional
     public void notifyLike(User actor, User recipient, Long postId) {
-        if (actor.getId().equals(recipient.getId())) return; // don't notify yourself
+        if (actor.getId().equals(recipient.getId())) return;
         boolean alreadyNotified = notificationRepository
                 .existsByActorAndRecipientAndPostIdAndType(actor, recipient, postId, NotificationType.LIKE);
-        if (alreadyNotified) return; // only notify the first time this user likes this post
+        if (alreadyNotified) return;
         notificationRepository.save(new Notification(recipient, actor, NotificationType.LIKE, postId, null));
     }
 
     @Transactional
     public void notifyComment(User actor, User recipient, Long postId, Long commentId) {
-        if (actor.getId().equals(recipient.getId())) return; // don't notify yourself
+        if (actor.getId().equals(recipient.getId())) return;
         notificationRepository.save(new Notification(recipient, actor, NotificationType.COMMENT, postId, commentId));
+    }
+
+    @Transactional
+    public void notifyReelLike(User actor, User recipient, Long reelId) {
+        if (actor.getId().equals(recipient.getId())) return;
+        boolean alreadyNotified = notificationRepository
+                .existsByActorAndRecipientAndReelIdAndType(actor, recipient, reelId, NotificationType.LIKE);
+        if (alreadyNotified) return;
+        notificationRepository.save(new Notification(recipient, actor, NotificationType.LIKE, null, reelId, null));
+    }
+
+    @Transactional
+    public void notifyReelComment(User actor, User recipient, Long reelId, Long commentId) {
+        if (actor.getId().equals(recipient.getId())) return;
+        notificationRepository.save(new Notification(recipient, actor, NotificationType.COMMENT, null, reelId, commentId));
     }
 
     @Transactional(readOnly = true)
@@ -45,6 +59,7 @@ public class NotificationService {
                         n.getActor().getAvatarUrl(),
                         n.getType(),
                         n.getPostId(),
+                        n.getReelId(),
                         n.getCommentId(),
                         n.isRead(),
                         n.getCreatedAt()

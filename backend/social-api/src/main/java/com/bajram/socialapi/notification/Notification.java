@@ -10,17 +10,14 @@ import java.time.Instant;
         @Index(name = "idx_notif_recipient_read", columnList = "recipient_id, is_read")
 })
 public class Notification {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // who receives this notification
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "recipient_id", nullable = false)
     private User recipient;
 
-    // who triggered it (liker, follower, commenter)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "actor_id", nullable = false)
     private User actor;
@@ -29,9 +26,11 @@ public class Notification {
     @Column(nullable = false, length = 20)
     private NotificationType type;
 
-    // nullable: FOLLOW notifications have no post/comment target
     @Column(name = "post_id")
     private Long postId;
+
+    @Column(name = "reel_id")
+    private Long reelId;
 
     @Column(name = "comment_id")
     private Long commentId;
@@ -57,7 +56,15 @@ public class Notification {
         this.commentId = commentId;
     }
 
-    // getters and setters
+    public Notification(User recipient, User actor, NotificationType type, Long postId, Long reelId, Long commentId) {
+        this.recipient = recipient;
+        this.actor = actor;
+        this.type = type;
+        this.postId = postId;
+        this.reelId = reelId;
+        this.commentId = commentId;
+    }
+
     public Long getId() { return id; }
     public User getRecipient() { return recipient; }
     public void setRecipient(User recipient) { this.recipient = recipient; }
@@ -67,6 +74,8 @@ public class Notification {
     public void setType(NotificationType type) { this.type = type; }
     public Long getPostId() { return postId; }
     public void setPostId(Long postId) { this.postId = postId; }
+    public Long getReelId() { return reelId; }
+    public void setReelId(Long reelId) { this.reelId = reelId; }
     public Long getCommentId() { return commentId; }
     public void setCommentId(Long commentId) { this.commentId = commentId; }
     public boolean isRead() { return read; }

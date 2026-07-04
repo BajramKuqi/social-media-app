@@ -6,6 +6,9 @@ import com.bajram.socialapi.post.PostRepository;
 import com.bajram.socialapi.post.PostResponse;
 import com.bajram.socialapi.like.LikeRepository;
 import com.bajram.socialapi.comment.CommentRepository;
+import com.bajram.socialapi.reel.Reel;
+import com.bajram.socialapi.reel.ReelRepository;
+import com.bajram.socialapi.reel.ReelResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +29,7 @@ public class UserProfileController {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final ReelRepository reelRepository;
     private final FollowRepository followRepository;
     private final LikeRepository likeRepository;
     private final CommentRepository commentRepository;
@@ -34,11 +38,12 @@ public class UserProfileController {
     private final FileStorageService fileStorageService;
 
     public UserProfileController(UserRepository userRepository, PostRepository postRepository,
-                                 FollowRepository followRepository, LikeRepository likeRepository,
-                                 CommentRepository commentRepository, HighlightService highlightService,
-                                 FileStorageService fileStorageService) {
+                                 ReelRepository reelRepository, FollowRepository followRepository,
+                                 LikeRepository likeRepository, CommentRepository commentRepository,
+                                 HighlightService highlightService, FileStorageService fileStorageService) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.reelRepository = reelRepository;
         this.followRepository = followRepository;
         this.likeRepository = likeRepository;
         this.commentRepository = commentRepository;
@@ -59,16 +64,18 @@ public class UserProfileController {
         User currentUser = getCurrentUser();
 
         long postCount = postRepository.findByAuthor(targetUser, Pageable.unpaged()).getTotalElements();
+        long reelCount = reelRepository.findByAuthor(targetUser, Pageable.unpaged()).getTotalElements();
         long followerCount = followRepository.countByFollowing(targetUser);
         long followingCount = followRepository.countByFollower(targetUser);
         boolean followed = followRepository.existsByFollowerAndFollowing(currentUser, targetUser);
 
         UserProfileResponse response = new UserProfileResponse(
                 targetUser.getId(), targetUser.getUsername(), targetUser.getAvatarUrl(),
-                postCount, followerCount, followingCount, followed
+                postCount, reelCount, followerCount, followingCount, followed
         );
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/{username}/highlights")
     public ResponseEntity<List<HighlightSummaryResponse>> getUserHighlights(@PathVariable String username) {
         User targetUser = userRepository.findByUsername(username)
@@ -104,6 +111,27 @@ public class UserProfileController {
         });
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/{username}/reels")
+    public ResponseEntity<Page<ReelResponse>> getUserReels(
+            @PathVariable String username,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        User targetUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        User currentUser = getCurrentUser();
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Reel> reels = reelRepository.findByAuthor(targetUser, pageable);
+        Page<ReelResponse> response = reels.map(reel -> {
+            long likeCount = likeRepository.countByReel(reel);
+            boolean liked = likeRepository.existsByUserAndReel(currentUser, reel);
+            long commentCount = commentRepository.countByReel(reel);
+            return ReelResponse.fromEntity(reel, likeCount, liked, commentCount);
+        });
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/me/avatar")
     public ResponseEntity<UserProfileResponse> updateAvatar(@RequestParam("image") MultipartFile image) {
         User currentUser = getCurrentUser();
@@ -112,15 +140,17 @@ public class UserProfileController {
         userRepository.save(currentUser);
 
         long postCount = postRepository.findByAuthor(currentUser, Pageable.unpaged()).getTotalElements();
+        long reelCount = reelRepository.findByAuthor(currentUser, Pageable.unpaged()).getTotalElements();
         long followerCount = followRepository.countByFollowing(currentUser);
         long followingCount = followRepository.countByFollower(currentUser);
 
         UserProfileResponse response = new UserProfileResponse(
                 currentUser.getId(), currentUser.getUsername(), currentUser.getAvatarUrl(),
-                postCount, followerCount, followingCount, false
+                postCount, reelCount, followerCount, followingCount, false
         );
         return ResponseEntity.ok(response);
     }
+
     @DeleteMapping("/me/avatar")
     public ResponseEntity<UserProfileResponse> removeAvatar() {
         User currentUser = getCurrentUser();
@@ -128,12 +158,13 @@ public class UserProfileController {
         userRepository.save(currentUser);
 
         long postCount = postRepository.findByAuthor(currentUser, Pageable.unpaged()).getTotalElements();
+        long reelCount = reelRepository.findByAuthor(currentUser, Pageable.unpaged()).getTotalElements();
         long followerCount = followRepository.countByFollowing(currentUser);
         long followingCount = followRepository.countByFollower(currentUser);
 
         UserProfileResponse response = new UserProfileResponse(
                 currentUser.getId(), currentUser.getUsername(), currentUser.getAvatarUrl(),
-                postCount, followerCount, followingCount, false
+                postCount, reelCount, followerCount, followingCount, false
         );
         return ResponseEntity.ok(response);
     }
