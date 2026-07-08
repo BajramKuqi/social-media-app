@@ -47,23 +47,23 @@ function UserSearch({ mode = 'profile', placeholder = 'Search users...' }) {
     }
 
     return (
-        <div ref={containerRef} className="relative w-48">
+        <div ref={containerRef} className="relative w-full max-w-xs mx-auto">
             <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => query.trim() && setOpen(true)}
                 placeholder={placeholder}
-                className="w-full border border-gray-200 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400"
+                className="w-full border border-sage-100 rounded-full px-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-mint-500/30 bg-sage-50"
             />
             {open && results.length > 0 && (
-                <div className="absolute top-full mt-1 left-0 right-0 bg-white border border-gray-200 rounded shadow-lg z-50 max-h-64 overflow-y-auto">
+                <div className="absolute top-full mt-1 left-0 right-0 bg-white border border-mint-100 rounded-2xl shadow-lg z-50 max-h-64 overflow-y-auto">
                     {results.map((user) =>
                         mode === 'message' ? (
                             <button
                                 key={user.id}
                                 onClick={() => handleSelect(user)}
-                                className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                className="block w-full text-left px-4 py-2 text-sm text-ink-800 hover:bg-sage-50"
                             >
                                 {user.username}
                             </button>
@@ -72,7 +72,7 @@ function UserSearch({ mode = 'profile', placeholder = 'Search users...' }) {
                                 key={user.id}
                                 to={`/profile/${user.username}`}
                                 onClick={() => handleSelect(user)}
-                                className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                className="block px-4 py-2 text-sm text-ink-800 hover:bg-sage-50"
                             >
                                 {user.username}
                             </Link>

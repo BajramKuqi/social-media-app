@@ -3,6 +3,14 @@ import { Link } from 'react-router-dom'
 import { getFollowers, getFollowing, followUser, unfollowUser, removeFollower } from '../api/follow'
 import { useAuth } from '../context/AuthContext'
 
+function CloseIcon() {
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+    )
+}
+
 function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange }) {
     const [users, setUsers] = useState([])
     const [page, setPage] = useState(0)
@@ -93,27 +101,27 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
     }
 
     return (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-            <div className="bg-white rounded-xl w-full max-w-sm max-h-[70vh] flex flex-col">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                    <span className="font-semibold text-gray-800">{title}</span>
+        <div className="fixed inset-0 bg-ink-800/50 z-50 flex items-center justify-center px-4">
+            <div className="bg-white rounded-2xl w-full max-w-sm max-h-[70vh] flex flex-col border border-mint-100">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-mint-100">
+                    <span className="font-display font-semibold text-ink-800">{title}</span>
                     <button
                         onClick={onClose}
-                        className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+                        className="text-ink-500 hover:text-mint-600 transition-colors"
                     >
-                        &times;
+                        <CloseIcon />
                     </button>
                 </div>
 
                 <div className="overflow-y-auto flex-1">
                     {loading && (
-                        <p className="text-gray-400 text-sm text-center py-6">Loading...</p>
+                        <p className="text-ink-500/60 text-sm text-center py-6">Loading...</p>
                     )}
                     {!loading && error && (
-                        <p className="text-red-500 text-sm text-center py-6">{error}</p>
+                        <p className="text-clay-500 text-sm text-center py-6">{error}</p>
                     )}
                     {!loading && !error && users.length === 0 && (
-                        <p className="text-gray-400 text-sm text-center py-6">
+                        <p className="text-ink-500/60 text-sm text-center py-6">
                             {mode === 'followers' ? 'No followers yet.' : 'Not following anyone yet.'}
                         </p>
                     )}
@@ -122,13 +130,13 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
                             const isSelf = u.username === currentUsername
                             const isBusy = busyUserId === u.id
                             return (
-                                <div key={u.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50">
+                                <div key={u.id} className="flex items-center gap-3 px-4 py-2.5 hover:bg-sage-50">
                                     <Link
                                         to={`/profile/${u.username}`}
                                         onClick={onClose}
                                         className="flex items-center gap-3 flex-1 min-w-0"
                                     >
-                                        <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-100 text-purple-600 flex items-center justify-center font-semibold shrink-0">
+                                        <div className="w-10 h-10 rounded-full overflow-hidden bg-mint-100 text-mint-600 flex items-center justify-center font-semibold shrink-0 font-display">
                                             {u.avatarUrl ? (
                                                 <img
                                                     src={u.avatarUrl}
@@ -139,7 +147,7 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
                                                 u.username.charAt(0).toUpperCase()
                                             )}
                                         </div>
-                                        <span className="text-sm text-gray-800 truncate">{u.username}</span>
+                                        <span className="text-sm text-ink-800 truncate">{u.username}</span>
                                     </Link>
 
                                     {showRemove ? (
@@ -147,7 +155,7 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
                                             <button
                                                 onClick={() => handleRemove(u)}
                                                 disabled={isBusy}
-                                                className="px-3 py-1.5 rounded text-xs font-medium disabled:opacity-50 shrink-0 bg-gray-100 text-gray-700 border border-gray-300"
+                                                className="px-3 py-1.5 rounded-full text-xs font-medium disabled:opacity-50 shrink-0 bg-sage-100 text-ink-800 border border-sage-100 hover:bg-sage-50 transition-colors"
                                             >
                                                 {isBusy ? '...' : 'Remove'}
                                             </button>
@@ -157,10 +165,10 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
                                             <button
                                                 onClick={() => handleFollowToggle(u)}
                                                 disabled={isBusy}
-                                                className={`px-3 py-1.5 rounded text-xs font-medium disabled:opacity-50 shrink-0 ${
+                                                className={`px-3 py-1.5 rounded-full text-xs font-medium disabled:opacity-50 shrink-0 transition-colors ${
                                                     u.followedByCurrentUser
-                                                        ? 'bg-gray-100 text-gray-700 border border-gray-300'
-                                                        : 'bg-purple-600 text-white'
+                                                        ? 'bg-sage-100 text-ink-800 border border-sage-100 hover:bg-sage-50'
+                                                        : 'bg-mint-500 text-white hover:bg-mint-600'
                                                 }`}
                                             >
                                                 {isBusy ? '...' : u.followedByCurrentUser ? 'Following' : 'Follow'}
@@ -173,7 +181,7 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
                     {!loading && hasMore && (
                         <button
                             onClick={handleLoadMore}
-                            className="w-full text-sm text-purple-600 font-medium py-3 hover:bg-gray-50"
+                            className="w-full text-sm text-mint-600 font-medium py-3 hover:bg-sage-50 transition-colors"
                         >
                             Load more
                         </button>

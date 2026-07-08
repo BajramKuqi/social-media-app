@@ -40,21 +40,21 @@ function ReelsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 px-4 py-6">
+        <div className="min-h-screen bg-sage-50 px-4 py-6">
             <div className="max-w-md mx-auto flex flex-col gap-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-lg font-semibold text-gray-800">Reels</h1>
+                    <h1 className="text-lg font-display font-semibold text-ink-800">Reels</h1>
                     <button
                         onClick={() => setShowCreateModal(true)}
-                        className="bg-purple-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-purple-700"
+                        className="bg-mint-500 text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-mint-600 transition-colors shadow-sm"
                     >
                         + New Reel
                     </button>
                 </div>
-                {loading && <p className="text-gray-500 text-center">Loading...</p>}
-                {error && <p className="text-red-500 text-center">{error}</p>}
+                {loading && <p className="text-ink-500 text-center">Loading...</p>}
+                {error && <p className="text-clay-500 text-center">{error}</p>}
                 {!loading && !error && reels.length === 0 && (
-                    <p className="text-gray-500 text-center">No reels yet.</p>
+                    <p className="text-ink-500 text-center">No reels yet.</p>
                 )}
                 {reels.map((reel) => (
                     <ReelCard key={reel.id} reel={reel} />

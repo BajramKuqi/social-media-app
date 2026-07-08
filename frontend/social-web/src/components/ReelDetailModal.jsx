@@ -3,6 +3,30 @@ import { getReelLikes, likeReel, unlikeReel, deleteReel, getReelComments, create
 import { useAuth } from '../context/AuthContext'
 import { Link } from 'react-router-dom'
 
+function HeartIcon({ filled }) {
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill={filled ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z" />
+        </svg>
+    )
+}
+
+function TrashIcon() {
+    return (
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16Z" />
+        </svg>
+    )
+}
+
+function CloseIcon() {
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+    )
+}
+
 function ReelDetailModal({ reel, onClose, onReelDeleted }) {
     const { username } = useAuth()
     const isOwnReel = reel.authorUsername === username
@@ -127,8 +151,8 @@ function ReelDetailModal({ reel, onClose, onReelDeleted }) {
     }
 
     return (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-4">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-3xl h-[80vh] flex overflow-hidden">
+        <div className="fixed inset-0 bg-ink-800/60 flex items-center justify-center z-50 px-4">
+            <div className="bg-white rounded-2xl shadow-lg w-full max-w-3xl h-[80vh] flex overflow-hidden border border-mint-100">
                 {/* Left: video */}
                 <div className="w-1/2 bg-black flex items-center justify-center shrink-0">
                     <video
@@ -143,24 +167,24 @@ function ReelDetailModal({ reel, onClose, onReelDeleted }) {
 
                 {/* Right: details */}
                 <div className="w-1/2 flex flex-col">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
-                        <span className="font-medium text-gray-800">{reel.authorUsername}</span>
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-mint-100">
+                        <span className="font-medium text-ink-800">{reel.authorUsername}</span>
                         <div className="flex items-center gap-3">
                             {isOwnReel && (
                                 <div className="relative">
                                     <button
                                         onClick={() => setShowMenu((prev) => !prev)}
-                                        className="text-gray-400 hover:text-gray-600 text-xl leading-none px-1"
+                                        className="text-ink-500 hover:text-mint-600 text-xl leading-none px-1"
                                         aria-label="Reel options"
                                     >
                                         &#8942;
                                     </button>
                                     {showMenu && (
-                                        <div className="absolute top-7 right-0 bg-white rounded-lg shadow-lg overflow-hidden w-36 text-left z-10">
+                                        <div className="absolute top-7 right-0 bg-white rounded-2xl shadow-lg overflow-hidden w-36 text-left z-10 border border-mint-100">
                                             <button
                                                 onClick={handleDeleteReel}
                                                 disabled={deletingReel}
-                                                className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-50"
+                                                className="w-full text-left px-4 py-2.5 text-sm text-clay-500 hover:bg-mint-100 disabled:opacity-50"
                                             >
                                                 {deletingReel ? 'Deleting...' : 'Delete Reel'}
                                             </button>
@@ -170,34 +194,34 @@ function ReelDetailModal({ reel, onClose, onReelDeleted }) {
                             )}
                             <button
                                 onClick={onClose}
-                                className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+                                className="text-ink-500 hover:text-mint-600 transition-colors"
                             >
-                                ×
+                                <CloseIcon />
                             </button>
                         </div>
                     </div>
 
                     {reel.caption && (
-                        <p className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
-                            <Link to={`/profile/${reel.authorUsername}`} className="font-medium hover:text-purple-600">
+                        <p className="px-4 py-2 text-sm text-ink-800 border-b border-mint-100">
+                            <Link to={`/profile/${reel.authorUsername}`} className="font-medium hover:text-mint-600">
                                 {reel.authorUsername}
                             </Link> {reel.caption}
                         </p>
                     )}
 
-                    <div className="flex border-b border-gray-100">
+                    <div className="flex border-b border-mint-100">
                         <button
                             onClick={() => switchTab('comments')}
-                            className={`flex-1 py-2 text-sm font-medium ${
-                                tab === 'comments' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-400'
+                            className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                                tab === 'comments' ? 'text-mint-600 border-b-2 border-mint-500' : 'text-ink-500/60 hover:text-mint-600'
                             }`}
                         >
                             Comments
                         </button>
                         <button
                             onClick={() => switchTab('likes')}
-                            className={`flex-1 py-2 text-sm font-medium ${
-                                tab === 'likes' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-400'
+                            className={`flex-1 py-2 text-sm font-medium transition-colors ${
+                                tab === 'likes' ? 'text-mint-600 border-b-2 border-mint-500' : 'text-ink-500/60 hover:text-mint-600'
                             }`}
                         >
                             Likes · {likeCount}
@@ -207,16 +231,16 @@ function ReelDetailModal({ reel, onClose, onReelDeleted }) {
                     <div className="flex-1 overflow-y-auto px-4 py-3">
                         {tab === 'comments' && (
                             <>
-                                {commentsLoading && <p className="text-gray-400 text-sm">Loading...</p>}
+                                {commentsLoading && <p className="text-ink-500/60 text-sm">Loading...</p>}
                                 {!commentsLoading && comments.length === 0 && (
-                                    <p className="text-gray-400 text-sm">No comments yet.</p>
+                                    <p className="text-ink-500/60 text-sm">No comments yet.</p>
                                 )}
                                 {!commentsLoading && comments.map((comment) => {
                                     const canDelete = comment.authorUsername === username || isOwnReel
                                     return (
                                         <div key={comment.id} className="flex justify-between items-start text-sm mb-2">
-                                            <p className="text-gray-700">
-                                                <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-purple-600">
+                                            <p className="text-ink-800">
+                                                <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-mint-600">
                                                     {comment.authorUsername}
                                                 </Link>{' '}
                                                 {comment.content}
@@ -224,9 +248,9 @@ function ReelDetailModal({ reel, onClose, onReelDeleted }) {
                                             {canDelete && (
                                                 <button
                                                     onClick={() => handleDeleteComment(comment.id)}
-                                                    className="text-gray-300 hover:text-red-500 text-xs ml-2 shrink-0"
+                                                    className="text-ink-500/40 hover:text-clay-500 ml-2 shrink-0"
                                                 >
-                                                    delete
+                                                    <TrashIcon />
                                                 </button>
                                             )}
                                         </div>
@@ -237,15 +261,15 @@ function ReelDetailModal({ reel, onClose, onReelDeleted }) {
 
                         {tab === 'likes' && (
                             <>
-                                {likersLoading && <p className="text-gray-400 text-sm">Loading...</p>}
+                                {likersLoading && <p className="text-ink-500/60 text-sm">Loading...</p>}
                                 {!likersLoading && likers.length === 0 && (
-                                    <p className="text-gray-400 text-sm">No likes yet.</p>
+                                    <p className="text-ink-500/60 text-sm">No likes yet.</p>
                                 )}
                                 {!likersLoading && likers.map((liker, i) => (
                                     <Link
                                         key={i}
                                         to={`/profile/${liker.username}`}
-                                        className="block text-sm text-gray-700 mb-2 font-medium hover:text-purple-600"
+                                        className="block text-sm text-ink-800 mb-2 font-medium hover:text-mint-600"
                                     >
                                         {liker.username}
                                     </Link>
@@ -254,15 +278,16 @@ function ReelDetailModal({ reel, onClose, onReelDeleted }) {
                         )}
                     </div>
 
-                    <div className="border-t border-gray-100 px-4 py-3 flex flex-col gap-2">
+                    <div className="border-t border-mint-100 px-4 py-3 flex flex-col gap-2">
                         <button
                             onClick={handleLikeToggle}
                             disabled={likeBusy}
-                            className={`text-sm font-medium w-fit ${
-                                liked ? 'text-purple-600' : 'text-gray-500'
-                            } hover:text-purple-600 disabled:opacity-50`}
+                            className={`flex items-center gap-1.5 text-sm font-medium w-fit rounded-full px-2 py-1 -ml-2 transition-all disabled:opacity-50 ${
+                                liked ? 'text-mint-600 glow-mint' : 'text-ink-500 hover:text-mint-600'
+                            }`}
                         >
-                            {liked ? 'Liked' : 'Like'} · {likeCount}
+                            <HeartIcon filled={liked} />
+                            {likeCount}
                         </button>
 
                         {tab === 'comments' && (
@@ -273,12 +298,12 @@ function ReelDetailModal({ reel, onClose, onReelDeleted }) {
                                     onChange={(e) => setNewComment(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
                                     placeholder="Add a comment..."
-                                    className="flex-1 border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400"
+                                    className="flex-1 min-w-0 border border-sage-100 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-mint-500/30"
                                 />
                                 <button
                                     onClick={handleAddComment}
                                     disabled={posting || !newComment.trim()}
-                                    className="text-purple-600 text-sm font-medium disabled:opacity-40"
+                                    className="text-mint-600 text-sm font-medium disabled:opacity-40 shrink-0 whitespace-nowrap"
                                 >
                                     Post
                                 </button>

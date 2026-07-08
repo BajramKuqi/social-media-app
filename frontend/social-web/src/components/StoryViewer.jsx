@@ -224,29 +224,29 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
                   &#8942;
                 </button>
                 {showMenu && (
-                    <div className="absolute top-8 right-0 bg-white rounded-lg shadow-lg overflow-hidden w-44 text-left">
+                    <div className="absolute top-8 right-0 bg-white rounded-2xl shadow-lg overflow-hidden w-44 text-left border border-mint-100">
                       <button
                           onClick={handleOpenHighlightPanel}
-                          className="w-full text-left px-4 py-2.5 text-sm text-gray-800 hover:bg-gray-100"
+                          className="w-full text-left px-4 py-2.5 text-sm text-ink-800 hover:bg-mint-100"
                       >
                         Add to Highlight
                       </button>
                       <button
                           onClick={handleDelete}
                           disabled={deleting}
-                          className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-50"
+                          className="w-full text-left px-4 py-2.5 text-sm text-clay-500 hover:bg-mint-100 disabled:opacity-50"
                       >
                         {deleting ? 'Deleting...' : 'Delete'}
                       </button>
                     </div>
                 )}
                 {showHighlightPanel && (
-                    <div className="absolute top-8 right-0 bg-white rounded-lg shadow-lg overflow-hidden w-64 text-left max-h-96 flex flex-col">
-                      <div className="flex items-center justify-between px-4 py-2.5 border-b border-gray-100">
-                        <span className="text-sm font-medium text-gray-800">Add to Highlight</span>
+                    <div className="absolute top-8 right-0 bg-white rounded-2xl shadow-lg overflow-hidden w-64 text-left max-h-96 flex flex-col border border-mint-100">
+                      <div className="flex items-center justify-between px-4 py-2.5 border-b border-mint-100">
+                        <span className="text-sm font-medium text-ink-800">Add to Highlight</span>
                         <button
                             onClick={handleCloseHighlightPanel}
-                            className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+                            className="text-ink-500 hover:text-mint-600 text-lg leading-none"
                         >
                           &times;
                         </button>
@@ -254,10 +254,10 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
 
                       <div className="overflow-y-auto flex-1">
                         {highlightsLoading && (
-                            <p className="text-gray-400 text-sm text-center py-4">Loading...</p>
+                            <p className="text-ink-500/60 text-sm text-center py-4">Loading...</p>
                         )}
                         {!highlightsLoading && highlights.length === 0 && (
-                            <p className="text-gray-400 text-sm text-center py-4 px-4">
+                            <p className="text-ink-500/60 text-sm text-center py-4 px-4">
                               No highlights yet. Create your first one below.
                             </p>
                         )}
@@ -270,9 +270,9 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
                                       key={h.id}
                                       onClick={() => !added && handleAddExisting(h.id)}
                                       disabled={added || isAdding}
-                                      className="w-full flex items-center gap-2.5 px-4 py-2 hover:bg-gray-50 disabled:cursor-default"
+                                      className="w-full flex items-center gap-2.5 px-4 py-2 hover:bg-sage-50 disabled:cursor-default"
                                   >
-                                    <div className="w-8 h-8 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden">
+                                    <div className="w-8 h-8 rounded-full bg-sage-100 flex-shrink-0 overflow-hidden">
                                       {h.coverImageUrl && (
                                           <img
                                               src={h.coverImageUrl}
@@ -281,10 +281,10 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
                                           />
                                       )}
                                     </div>
-                                    <span className="text-sm text-gray-800 truncate flex-1 text-left">
+                                    <span className="text-sm text-ink-800 truncate flex-1 text-left">
                             {h.title}
                           </span>
-                                    <span className="text-xs text-gray-400">
+                                    <span className="text-xs text-ink-500/60">
                             {isAdding ? '...' : added ? 'Added \u2713' : 'Add'}
                           </span>
                                   </button>
@@ -294,7 +294,7 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
 
                       <form
                           onSubmit={handleCreateHighlight}
-                          className="flex items-center gap-2 px-3 py-2.5 border-t border-gray-100"
+                          className="flex items-center gap-2 px-3 py-2.5 border-t border-mint-100"
                       >
                         <input
                             type="text"
@@ -302,12 +302,12 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
                             onChange={(e) => setNewHighlightTitle(e.target.value)}
                             placeholder="New highlight name"
                             maxLength={30}
-                            className="flex-1 text-sm px-2 py-1.5 border border-gray-200 rounded outline-none focus:border-purple-400"
+                            className="flex-1 min-w-0 text-sm px-2 py-1.5 border border-sage-100 rounded-full outline-none focus:border-mint-500"
                         />
                         <button
                             type="submit"
                             disabled={!newHighlightTitle.trim() || creatingHighlight}
-                            className="text-sm text-purple-600 font-medium disabled:opacity-40 flex-shrink-0"
+                            className="text-sm text-mint-600 font-medium disabled:opacity-40 shrink-0 whitespace-nowrap"
                         >
                           {creatingHighlight ? '...' : 'Create'}
                         </button>
@@ -385,30 +385,30 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
           {isOwnStory && !overlaysActive && (
               <button
                   onClick={handleShowViewers}
-                  className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-black/40 px-4 py-2 rounded-full z-10"
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-mint-600/60 px-4 py-2 rounded-full z-10"
               >
                 &uarr; Seen by
               </button>
           )}
 
           {showViewers && (
-              <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[50%] overflow-y-auto z-20">
-                <div className="sticky top-0 bg-white flex items-center justify-between px-4 py-3 border-b border-gray-100">
-              <span className="font-medium text-gray-800">
+              <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[50%] overflow-y-auto z-20 border-t border-mint-100">
+                <div className="sticky top-0 bg-white flex items-center justify-between px-4 py-3 border-b border-mint-100">
+              <span className="font-medium text-ink-800">
                 Seen by {viewers.length}
               </span>
                   <button
                       onClick={handleCloseViewers}
-                      className="text-gray-400 hover:text-gray-600"
+                      className="text-ink-500 hover:text-mint-600"
                   >
                     &times;
                   </button>
                 </div>
                 {viewersLoading && (
-                    <p className="text-gray-400 text-sm text-center py-4">Loading...</p>
+                    <p className="text-ink-500/60 text-sm text-center py-4">Loading...</p>
                 )}
                 {!viewersLoading && viewers.length === 0 && (
-                    <p className="text-gray-400 text-sm text-center py-4">
+                    <p className="text-ink-500/60 text-sm text-center py-4">
                       No views yet
                     </p>
                 )}
@@ -423,7 +423,7 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
                               alt={v.viewerUsername}
                               className="w-8 h-8 rounded-full object-cover"
                           />
-                          <span className="text-sm text-gray-800">
+                          <span className="text-sm text-ink-800">
                     {v.viewerUsername}
                   </span>
                         </div>

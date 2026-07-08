@@ -99,12 +99,12 @@ function NotificationBell() {
         <div className="relative" ref={containerRef}>
             <button
                 onClick={handleToggle}
-                className="relative p-2 rounded-full hover:bg-gray-100"
+                className="relative p-2 rounded-full hover:bg-mint-100 transition-colors"
                 aria-label="Notifications"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6 text-gray-700"
+                    className="w-6 h-6 text-ink-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -117,23 +117,23 @@ function NotificationBell() {
                     />
                 </svg>
                 {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 bg-purple-600 text-white text-[10px] font-semibold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                    <span className="absolute -top-0.5 -right-0.5 bg-clay-400 text-white text-[10px] font-semibold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
                         {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                 )}
             </button>
 
             {isOpen && (
-                <div className="absolute right-0 mt-2 w-80 max-h-[70vh] bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col z-50">
-                    <div className="px-4 py-3 border-b border-gray-100 font-semibold text-gray-800">
+                <div className="absolute right-0 mt-2 w-80 max-h-[70vh] bg-white rounded-2xl shadow-lg border border-mint-100 flex flex-col z-50">
+                    <div className="px-4 py-3 border-b border-mint-100 font-display font-semibold text-ink-800">
                         Notifications
                     </div>
                     <div className="overflow-y-auto flex-1">
                         {loading && (
-                            <p className="text-gray-400 text-sm text-center py-6">Loading...</p>
+                            <p className="text-ink-500/60 text-sm text-center py-6">Loading...</p>
                         )}
                         {!loading && notifications.length === 0 && (
-                            <p className="text-gray-400 text-sm text-center py-6">
+                            <p className="text-ink-500/60 text-sm text-center py-6">
                                 No notifications yet.
                             </p>
                         )}
@@ -143,11 +143,11 @@ function NotificationBell() {
                                     key={n.id}
                                     to={notificationLink(n, username)}
                                     onClick={() => setIsOpen(false)}
-                                    className={`flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 ${
-                                        !n.read ? 'bg-purple-50' : ''
+                                    className={`flex items-center gap-3 px-4 py-2.5 hover:bg-sage-50 transition-colors ${
+                                        !n.read ? 'bg-clay-400/10' : ''
                                     }`}
                                 >
-                                    <div className="w-9 h-9 rounded-full overflow-hidden bg-purple-100 text-purple-600 flex items-center justify-center font-semibold shrink-0 text-sm">
+                                    <div className="w-9 h-9 rounded-full overflow-hidden bg-mint-100 text-mint-600 flex items-center justify-center font-semibold shrink-0 text-sm font-display">
                                         {n.actorAvatarUrl ? (
                                             <img
                                                 src={n.actorAvatarUrl}
@@ -158,10 +158,10 @@ function NotificationBell() {
                                             n.actorUsername.charAt(0).toUpperCase()
                                         )}
                                     </div>
-                                    <p className="text-sm text-gray-800 min-w-0">
+                                    <p className="text-sm text-ink-800 min-w-0">
                                         <span className="font-medium">{n.actorUsername}</span>{' '}
-                                        <span className="text-gray-600">{notificationText(n)}</span>{' '}
-                                        <span className="text-gray-400 text-xs">{timeAgo(n.createdAt)}</span>
+                                        <span className="text-ink-500">{notificationText(n)}</span>{' '}
+                                        <span className="text-ink-500/60 text-xs">{timeAgo(n.createdAt)}</span>
                                     </p>
                                 </Link>
                             ))}

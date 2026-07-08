@@ -41,34 +41,31 @@ function FeedPage() {
   }, [mode])
 
   function handlePostCreated(newPost) {
-    // Only prepend if it matches current view (new posts are always "yours",
-    // so they belong in both all/following views since you follow yourself...
-    // adjust if your backend excludes self from following feed)
     setPosts((prev) => [newPost, ...prev])
   }
 
   return (
-      <div className="min-h-screen bg-gray-50 px-4 py-6">
+      <div className="min-h-screen bg-sage-50 px-4 py-6">
         <div className="max-w-md mx-auto flex flex-col gap-4">
           <StoryTray />
           <div className="flex items-center justify-between">
-            <div className="flex gap-2">
+            <div className="flex gap-2 bg-sage-100 p-1 rounded-full">
               <button
                   onClick={() => setMode('all')}
-                  className={`px-3 py-1.5 rounded text-sm font-medium ${
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                       mode === 'all'
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-white text-gray-600 border border-gray-300'
+                          ? 'bg-mint-500 text-white shadow-sm'
+                          : 'text-ink-500 hover:text-mint-600'
                   }`}
               >
-                All posts
+                For You
               </button>
               <button
                   onClick={() => setMode('following')}
-                  className={`px-3 py-1.5 rounded text-sm font-medium ${
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
                       mode === 'following'
-                          ? 'bg-purple-600 text-white'
-                          : 'bg-white text-gray-600 border border-gray-300'
+                          ? 'bg-mint-500 text-white shadow-sm'
+                          : 'text-ink-500 hover:text-mint-600'
                   }`}
               >
                 Following
@@ -76,22 +73,20 @@ function FeedPage() {
             </div>
             <button
                 onClick={() => setShowCreateModal(true)}
-                className="bg-purple-600 text-white px-3 py-1.5 rounded text-sm font-medium hover:bg-purple-700"
+                className="bg-mint-500 text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-mint-600 transition-colors shadow-sm"
             >
               + New Post
             </button>
           </div>
-
-          {loading && <p className="text-gray-500 text-center">Loading...</p>}
-          {error && <p className="text-red-500 text-center">{error}</p>}
+          {loading && <p className="text-ink-500 text-center">Loading...</p>}
+          {error && <p className="text-clay-500 text-center">{error}</p>}
           {!loading && !error && posts.length === 0 && (
-              <p className="text-gray-500 text-center">No posts yet.</p>
+              <p className="text-ink-500 text-center">No posts yet.</p>
           )}
           {posts.map((post) => (
               <PostCard key={post.id} post={post} />
           ))}
         </div>
-
         {showCreateModal && (
             <CreatePostModal
                 onClose={() => setShowCreateModal(false)}

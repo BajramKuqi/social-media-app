@@ -6,22 +6,16 @@ function SettingsMenu() {
     const [isOpen, setIsOpen] = useState(false)
     const containerRef = useRef(null)
 
-    function handleClickOutside(e) {
-        if (containerRef.current && !containerRef.current.contains(e.target)) {
-            setIsOpen(false)
-        }
-    }
-
     return (
         <div className="relative" ref={containerRef}>
             <button
                 onClick={() => setIsOpen((prev) => !prev)}
-                className="p-2 rounded-full hover:bg-gray-100"
+                className="p-2 rounded-full hover:bg-mint-100 transition-colors"
                 aria-label="Settings"
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6 text-gray-700"
+                    className="w-6 h-6 text-ink-500"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -39,17 +33,16 @@ function SettingsMenu() {
                     />
                 </svg>
             </button>
-
             {isOpen && (
                 <>
-                    <div className="fixed inset-0 z-10" onClick={handleClickOutside} />
-                    <div className="absolute right-0 mt-2 w-44 bg-white rounded-lg shadow-lg overflow-hidden z-20">
+                    <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+                    <div className="absolute right-0 mt-2 w-44 bg-white rounded-2xl shadow-lg overflow-hidden z-20 border border-mint-100">
                         <button
                             onClick={() => {
                                 setIsOpen(false)
                                 logoutUser()
                             }}
-                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100"
+                            className="w-full text-left px-4 py-2.5 text-sm text-clay-500 hover:bg-mint-100 transition-colors"
                         >
                             Log out
                         </button>

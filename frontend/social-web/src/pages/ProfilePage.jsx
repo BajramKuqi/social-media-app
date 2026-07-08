@@ -10,6 +10,21 @@ import { getHighlightsForUser, getHighlightDetail } from '../api/highlights'
 import HighlightViewer from '../components/HighlightViewer'
 import FollowListModal from '../components/FollowListModal'
 
+function BackIcon() {
+    return (
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m12 19-7-7 7-7M19 12H5" />
+        </svg>
+    )
+}
+
+function PlayIcon() {
+    return (
+        <svg className="absolute top-1 right-1 w-4 h-4 text-white drop-shadow" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+        </svg>
+    )
+}
 
 function ProfilePage() {
     const { username } = useParams()
@@ -142,25 +157,26 @@ function ProfilePage() {
     }
 
     if (loading) {
-        return <p className="text-gray-500 text-center py-10">Loading...</p>
+        return <p className="text-ink-500 text-center py-10">Loading...</p>
     }
 
     if (error || !profile) {
-        return <p className="text-red-500 text-center py-10">{error || 'Profile not found'}</p>
+        return <p className="text-clay-500 text-center py-10">{error || 'Profile not found'}</p>
     }
 
     const isOwnProfile = username === currentUsername
 
     return (
-        <div className="min-h-screen bg-gray-50 px-4 py-6">
+        <div className="min-h-screen bg-sage-50 px-4 py-6">
             <div className="max-w-md mx-auto flex flex-col gap-6">
-                <Link to="/" className="text-sm text-purple-600 hover:underline w-fit">
-                    ← Back to feed
+                <Link to="/" className="flex items-center gap-1.5 text-sm text-mint-600 hover:text-mint-700 w-fit font-medium">
+                    <BackIcon />
+                    Back to feed
                 </Link>
                 <div className="flex items-center gap-4">
                     <div className="relative shrink-0">
                         <div
-                            className={`relative w-20 h-20 rounded-full overflow-hidden bg-purple-100 text-purple-600 flex items-center justify-center text-2xl font-semibold ${
+                            className={`relative w-20 h-20 rounded-full overflow-hidden bg-mint-100 text-mint-600 flex items-center justify-center text-2xl font-semibold font-display ${
                                 isOwnProfile ? 'cursor-pointer' : ''
                             }`}
                             onClick={() => isOwnProfile && setShowAvatarMenu((prev) => !prev)}
@@ -175,7 +191,7 @@ function ProfilePage() {
                                 profile.username.charAt(0).toUpperCase()
                             )}
                             {isOwnProfile && (
-                                <div className="absolute inset-0 bg-black/0 hover:bg-black/30 transition-colors flex items-center justify-center text-white text-xs opacity-0 hover:opacity-100">
+                                <div className="absolute inset-0 bg-ink-800/0 hover:bg-ink-800/30 transition-colors flex items-center justify-center text-white text-xs opacity-0 hover:opacity-100">
                                     {avatarUploading ? '...' : 'Edit'}
                                 </div>
                             )}
@@ -186,13 +202,13 @@ function ProfilePage() {
                                     className="fixed inset-0 z-10"
                                     onClick={() => setShowAvatarMenu(false)}
                                 />
-                                <div className="absolute top-full mt-2 left-0 bg-white rounded-lg shadow-lg overflow-hidden w-40 text-left z-20">
+                                <div className="absolute top-full mt-2 left-0 bg-white rounded-2xl shadow-lg overflow-hidden w-40 text-left z-20 border border-mint-100">
                                     <button
                                         onClick={() => {
                                             setShowAvatarMenu(false)
                                             fileInputRef.current.click()
                                         }}
-                                        className="w-full text-left px-4 py-2.5 text-sm text-gray-800 hover:bg-gray-100"
+                                        className="w-full text-left px-4 py-2.5 text-sm text-ink-800 hover:bg-mint-100"
                                     >
                                         Change Photo
                                     </button>
@@ -203,7 +219,7 @@ function ProfilePage() {
                                                 handleRemoveAvatar()
                                             }}
                                             disabled={avatarUploading}
-                                            className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-50"
+                                            className="w-full text-left px-4 py-2.5 text-sm text-clay-500 hover:bg-mint-100 disabled:opacity-50"
                                         >
                                             {avatarUploading ? 'Removing...' : 'Remove Photo'}
                                         </button>
@@ -223,16 +239,16 @@ function ProfilePage() {
                     )}
                     <div className="flex-1">
                         <div className="flex items-center gap-2">
-                            <h1 className="font-semibold text-lg text-gray-800">{profile.username}</h1>
+                            <h1 className="font-display font-semibold text-lg text-ink-800">{profile.username}</h1>
                         </div>
-                        <div className="flex gap-4 mt-1 text-sm text-gray-600">
-                            <span><strong>{profile.postCount}</strong> posts</span>
-                            <span><strong>{profile.reelCount}</strong> reels</span>
-                            <button onClick={() => setFollowListMode('followers')} className="hover:underline">
-                                <strong>{profile.followerCount}</strong> followers
+                        <div className="flex gap-4 mt-1 text-sm text-ink-500">
+                            <span><strong className="text-ink-800">{profile.postCount}</strong> posts</span>
+                            <span><strong className="text-ink-800">{profile.reelCount}</strong> reels</span>
+                            <button onClick={() => setFollowListMode('followers')} className="hover:text-mint-600 transition-colors">
+                                <strong className="text-ink-800">{profile.followerCount}</strong> followers
                             </button>
-                            <button onClick={() => setFollowListMode('following')} className="hover:underline">
-                                <strong>{profile.followingCount}</strong> following
+                            <button onClick={() => setFollowListMode('following')} className="hover:text-mint-600 transition-colors">
+                                <strong className="text-ink-800">{profile.followingCount}</strong> following
                             </button>
                         </div>
                         {!isOwnProfile && (
@@ -240,17 +256,17 @@ function ProfilePage() {
                                 <button
                                     onClick={handleFollowToggle}
                                     disabled={followBusy}
-                                    className={`px-4 py-1.5 rounded text-sm font-medium disabled:opacity-50 ${
+                                    className={`px-4 py-1.5 rounded-full text-sm font-medium disabled:opacity-50 transition-colors ${
                                         profile.followedByCurrentUser
-                                            ? 'bg-gray-100 text-gray-700 border border-gray-300'
-                                            : 'bg-purple-600 text-white'
+                                            ? 'bg-sage-100 text-ink-800 border border-sage-100 hover:bg-sage-50'
+                                            : 'bg-mint-500 text-white hover:bg-mint-600'
                                     }`}
                                 >
                                     {profile.followedByCurrentUser ? 'Following' : 'Follow'}
                                 </button>
                                 <button
                                     onClick={handleMessageClick}
-                                    className="px-4 py-1.5 rounded text-sm font-medium bg-gray-100 text-gray-700 border border-gray-300"
+                                    className="px-4 py-1.5 rounded-full text-sm font-medium bg-sage-100 text-ink-800 border border-sage-100 hover:bg-sage-50 transition-colors"
                                 >
                                     Message
                                 </button>
@@ -267,7 +283,7 @@ function ProfilePage() {
                                 onClick={() => handleOpenHighlight(h.id)}
                                 className="flex flex-col items-center gap-1 shrink-0 w-16"
                             >
-                                <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-200 border-2 border-gray-300">
+                                <div className="w-16 h-16 rounded-full overflow-hidden bg-sage-100 border-2 border-mint-100">
                                     {h.coverImageUrl && (
                                         <img
                                             src={h.coverImageUrl}
@@ -276,7 +292,7 @@ function ProfilePage() {
                                         />
                                     )}
                                 </div>
-                                <span className="text-xs text-gray-700 truncate w-full text-center">
+                                <span className="text-xs text-ink-800 truncate w-full text-center">
                                     {h.title}
                                 </span>
                             </button>
@@ -284,19 +300,19 @@ function ProfilePage() {
                     </div>
                 )}
 
-                <div className="flex border-t border-b border-gray-200">
+                <div className="flex border-t border-b border-mint-100">
                     <button
                         onClick={() => setActiveTab('posts')}
-                        className={`flex-1 py-2.5 text-sm font-medium ${
-                            activeTab === 'posts' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-400'
+                        className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+                            activeTab === 'posts' ? 'text-mint-600 border-b-2 border-mint-500' : 'text-ink-500/60 hover:text-mint-600'
                         }`}
                     >
                         Posts
                     </button>
                     <button
                         onClick={() => setActiveTab('reels')}
-                        className={`flex-1 py-2.5 text-sm font-medium ${
-                            activeTab === 'reels' ? 'text-purple-600 border-b-2 border-purple-600' : 'text-gray-400'
+                        className={`flex-1 py-2.5 text-sm font-medium transition-colors ${
+                            activeTab === 'reels' ? 'text-mint-600 border-b-2 border-mint-500' : 'text-ink-500/60 hover:text-mint-600'
                         }`}
                     >
                         Reels
@@ -305,14 +321,14 @@ function ProfilePage() {
 
                 {activeTab === 'posts' && (
                     posts.length === 0 ? (
-                        <p className="text-gray-400 text-center py-10">No posts yet.</p>
+                        <p className="text-ink-500/60 text-center py-10">No posts yet.</p>
                     ) : (
                         <div className="grid grid-cols-3 gap-1">
                             {posts.map((post) => (
                                 <button
                                     key={post.id}
                                     onClick={() => setSelectedPost(post)}
-                                    className="aspect-square bg-gray-200 overflow-hidden"
+                                    className="aspect-square bg-sage-100 overflow-hidden rounded-md"
                                 >
                                     <img
                                         src={post.imageUrl}
@@ -327,14 +343,14 @@ function ProfilePage() {
 
                 {activeTab === 'reels' && (
                     reels.length === 0 ? (
-                        <p className="text-gray-400 text-center py-10">No reels yet.</p>
+                        <p className="text-ink-500/60 text-center py-10">No reels yet.</p>
                     ) : (
                         <div className="grid grid-cols-3 gap-1">
                             {reels.map((reel) => (
                                 <button
                                     key={reel.id}
                                     onClick={() => setSelectedReel(reel)}
-                                    className="aspect-square bg-gray-900 overflow-hidden relative"
+                                    className="aspect-square bg-ink-800 overflow-hidden relative rounded-md"
                                 >
                                     {reel.thumbnailUrl ? (
                                         <img
@@ -349,9 +365,7 @@ function ProfilePage() {
                                             muted
                                         />
                                     )}
-                                    <svg className="absolute top-1 right-1 w-4 h-4 text-white drop-shadow" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M8 5v14l11-7z" />
-                                    </svg>
+                                    <PlayIcon />
                                 </button>
                             ))}
                         </div>
