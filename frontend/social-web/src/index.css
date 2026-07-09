@@ -2,53 +2,78 @@
 @import "tailwindcss";
 
 @theme {
-    /* Backgrounds */
-    --color-sage-50: #F3F7F0;
-    --color-sage-100: #E4EFDE;
 
-    /* Primary accent — mint/teal green */
+    --color-canvas: #FAFAFA;
+    --color-surface: #FFFFFF;
+    --color-border: #DBDBDB;
+    --color-border-light: #EFEFEF;
+
+    --color-ink-900: #262626;
+    --color-ink-800: #262626;
+    --color-ink-500: #8E8E8E;
+    --color-ink-400: #C7C7C7;
+
+    --color-sunset-50: #FFF3EE;
+    --color-sunset-100: #FFE3D6;
+    --color-sunset-400: #FF8A65;
+    --color-sunset-500: #F9704F;
+    --color-sunset-600: #E8563A;
+    --color-sunset-700: #C43F52;
+
+    --color-plum-400: #D65D8A;
+    --color-plum-500: #C4487A;
+
+    --color-mint-50: #F0F9F5;
     --color-mint-100: #D9EEE5;
     --color-mint-500: #4FA98A;
     --color-mint-600: #3D8B70;
-
-    /* Secondary accent — warm clay */
+    --color-mint-700: #2F6E58;
     --color-clay-400: #F0A868;
     --color-clay-500: #E89650;
+    --color-sage-50: #F3F7F0;
+    --color-sage-100: #E4EFDE;
 
-    /* Text */
-    --color-ink-800: #2B332E;
-    --color-ink-500: #5C6660;
-
-    /* Fonts */
     --font-display: "Fraunces", serif;
     --font-sans: "Inter", sans-serif;
 
-    /* Signature glow shadow (for likes, active states, focus) */
-    --shadow-glow: 0 0 0 4px rgba(79, 169, 138, 0.15), 0 4px 14px rgba(79, 169, 138, 0.22);
-    --shadow-glow-clay: 0 0 0 4px rgba(240, 168, 104, 0.18), 0 4px 14px rgba(240, 168, 104, 0.22);
+    --shadow-glow: 0 0 0 4px rgba(249, 112, 79, 0.15), 0 4px 14px rgba(249, 112, 79, 0.22);
+    --shadow-glow-plum: 0 0 0 4px rgba(196, 72, 122, 0.18), 0 4px 14px rgba(196, 72, 122, 0.22);
+
+    --gradient-story: linear-gradient(45deg, #E8563A, #F9704F, #D65D8A);
 }
 
 @layer base {
     body {
-        @apply bg-sage-50 text-ink-800 font-sans antialiased;
+        @apply bg-canvas text-ink-900 font-sans antialiased;
     }
-
     h1, h2, h3, h4 {
-        @apply font-display text-ink-800;
+        @apply font-display text-ink-900;
     }
 
-    /* Default focus ring uses our accent, not browser blue */
     :focus-visible {
         outline: none;
         box-shadow: var(--shadow-glow);
         border-radius: 0.5rem;
     }
+    a, button {
+        -webkit-tap-highlight-color: transparent;
+    }
+    html {
+        overflow-y: scroll;
+        scrollbar-gutter: stable;
+    }
+
+    .card {
+        @apply bg-surface border border-border-light rounded-sm;
+    }
 }
 
-@utility glow-mint {
+@utility glow-sunset {
     box-shadow: var(--shadow-glow);
 }
-
-@utility glow-clay {
-    box-shadow: var(--shadow-glow-clay);
+@utility glow-plum {
+    box-shadow: var(--shadow-glow-plum);
+}
+@utility story-ring {
+    background: var(--gradient-story);
 }

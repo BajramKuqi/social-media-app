@@ -97,17 +97,17 @@ function HighlightViewer({ highlight, isOwner, onClose, onItemDeleted }) {
                     <div className="relative">
                         <button
                             onClick={handleToggleMenu}
-                            className="text-white text-2xl leading-none px-1"
+                            className="text-white text-2xl leading-none px-1 transition-opacity hover:opacity-70"
                             aria-label="Highlight options"
                         >
                             &#8942;
                         </button>
                         {showMenu && (
-                            <div className="absolute top-8 right-0 bg-white rounded-lg shadow-lg overflow-hidden w-52 text-left">
+                            <div className="absolute top-8 right-0 bg-surface border border-border-light rounded-xl shadow-lg overflow-hidden w-52 text-left">
                                 <button
                                     onClick={handleDelete}
                                     disabled={deleting}
-                                    className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-gray-100 disabled:opacity-50"
+                                    className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-sage-50 disabled:opacity-50 transition-colors"
                                 >
                                     {deleting ? 'Removing...' : 'Remove from Highlight'}
                                 </button>
@@ -115,16 +115,19 @@ function HighlightViewer({ highlight, isOwner, onClose, onItemDeleted }) {
                         )}
                     </div>
                 )}
-                <button onClick={onClose} className="text-white text-2xl leading-none">
+                <button
+                    onClick={onClose}
+                    className="text-white text-2xl leading-none transition-opacity hover:opacity-70"
+                >
                     &times;
                 </button>
             </div>
 
             <div className="absolute top-2 left-2 right-2 flex gap-1 z-10">
                 {stories.map((s, idx) => (
-                    <div key={s.itemId} className="flex-1 h-1 bg-white/30 rounded overflow-hidden">
+                    <div key={s.itemId} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-white transition-none"
+                            className="h-full bg-insta-blue transition-none"
                             style={{
                                 width:
                                     idx < storyIndex ? '100%' : idx === storyIndex ? `${progress}%` : '0%',
@@ -135,7 +138,7 @@ function HighlightViewer({ highlight, isOwner, onClose, onItemDeleted }) {
             </div>
 
             <div className="absolute top-8 left-2 z-10">
-                <span className="text-white text-sm font-medium">{highlight.title}</span>
+                <span className="text-white text-sm font-medium font-display">{highlight.title}</span>
             </div>
 
             <div className="relative w-full max-w-md h-full flex items-center">

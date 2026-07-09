@@ -32,6 +32,7 @@ function PostCard({ post }) {
   const [liked, setLiked] = useState(post.likedByCurrentUser)
   const [likeCount, setLikeCount] = useState(post.likeCount)
   const [busy, setBusy] = useState(false)
+  const [justLiked, setJustLiked] = useState(false)
 
   const [showComments, setShowComments] = useState(false)
   const [comments, setComments] = useState([])
@@ -53,6 +54,8 @@ function PostCard({ post }) {
         await likePost(post.id)
         setLiked(true)
         setLikeCount((prev) => prev + 1)
+        setJustLiked(true)
+        setTimeout(() => setJustLiked(false), 300)
       }
     } catch (err) {
       console.error('Failed to toggle like', err)
@@ -119,15 +122,17 @@ function PostCard({ post }) {
                 onClick={handleLikeToggle}
                 disabled={busy}
                 className={`flex items-center gap-1.5 text-sm font-medium rounded-full px-2 py-1 -ml-2 transition-all disabled:opacity-50 ${
-                    liked ? 'text-mint-600 glow-mint' : 'text-ink-500 hover:text-mint-600'
+                    liked ? 'text-red-500' : 'text-ink-500 hover:text-red-400'
                 }`}
             >
-              <HeartIcon filled={liked} />
+              <span className={`inline-flex transition-transform duration-300 ${justLiked ? 'scale-125' : 'scale-100'}`}>
+                <HeartIcon filled={liked} />
+              </span>
               {likeCount}
             </button>
             <button
                 onClick={toggleComments}
-                className="flex items-center gap-1.5 text-sm text-ink-500 hover:text-mint-600"
+                className="flex items-center gap-1.5 text-sm text-ink-500 hover:text-black"
             >
               <CommentIcon />
               {commentCount}
@@ -144,14 +149,14 @@ function PostCard({ post }) {
           )}
 
           {showComments && (
-              <div className="mt-2 flex flex-col gap-2 border-t border-mint-100 pt-2">
+              <div className="mt-2 flex flex-col gap-2 border-t border-black/20 pt-2">
                 {comments.length === 0 && (
                     <p className="text-ink-500/60 text-sm">No comments yet.</p>
                 )}
                 {comments.map((comment) => (
                     <div key={comment.id} className="flex justify-between items-start text-sm">
                       <p className="text-ink-800">
-                        <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-mint-600">
+                        <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-black">
                           {comment.authorUsername}
                         </Link>{' '}
                         {comment.content}
@@ -174,12 +179,12 @@ function PostCard({ post }) {
                       onChange={(e) => setNewComment(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
                       placeholder="Add a comment..."
-                      className="flex-1 border border-sage-100 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-mint-500/30"
+                      className="flex-1 border border-black/20 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/30"
                   />
                   <button
                       onClick={handleAddComment}
                       disabled={posting || !newComment.trim()}
-                      className="text-mint-600 text-sm font-medium disabled:opacity-40 px-2"
+                      className="text-black text-sm font-medium disabled:opacity-40 px-2"
                   >
                     Post
                   </button>

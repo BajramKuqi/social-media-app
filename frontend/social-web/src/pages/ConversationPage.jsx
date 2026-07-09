@@ -219,12 +219,12 @@ function ConversationPage() {
     const headerName = otherUsername || (conversationId ? '' : userId ? '' : '')
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+        <div className="min-h-screen bg-sage-50 flex flex-col">
+            <div className="bg-white border-b border-sage-200 px-4 py-3 flex items-center gap-3">
                 <button onClick={() => navigate('/messages')} className="text-gray-500 hover:text-gray-700">
                     ?
                 </button>
-                <span className="font-medium text-gray-800 flex-1">{headerName || 'Conversation'}</span>
+                <span className="font-medium text-gray-800 flex-1 font-display">{headerName || 'Conversation'}</span>
                 {resolvedConversationId && (
                     <div className="relative">
                         <button onClick={() => setShowMenu((prev) => !prev)} className="text-gray-500 hover:text-gray-700 px-2">
@@ -240,7 +240,7 @@ function ConversationPage() {
                                                 setShowMenu(false)
                                                 setShowAddMember(true)
                                             }}
-                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100"
+                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-sage-50"
                                         >
                                             Add people
                                         </button>
@@ -251,7 +251,7 @@ function ConversationPage() {
                                                 setShowMenu(false)
                                                 handleExitGroup()
                                             }}
-                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100"
+                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-sage-50"
                                         >
                                             Exit group
                                         </button>
@@ -261,7 +261,7 @@ function ConversationPage() {
                                             setShowMenu(false)
                                             handleDeleteConversation()
                                         }}
-                                        className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-gray-100"
+                                        className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-sage-50"
                                     >
                                         Delete chat
                                     </button>
@@ -276,7 +276,7 @@ function ConversationPage() {
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
                     <div className="bg-white rounded-xl w-full max-w-sm p-4 flex flex-col gap-3">
                         <div className="flex items-center justify-between">
-                            <span className="font-semibold text-gray-800">Add people</span>
+                            <span className="font-semibold text-gray-800 font-display">Add people</span>
                             <button
                                 onClick={() => {
                                     setShowAddMember(false)
@@ -293,7 +293,7 @@ function ConversationPage() {
                             value={addQuery}
                             onChange={(e) => setAddQuery(e.target.value)}
                             placeholder="Search users..."
-                            className="border border-gray-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400"
+                            className="border border-sage-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-mint-400"
                         />
                         <div className="max-h-56 overflow-y-auto flex flex-col">
                             {addResults.map((u) => (
@@ -301,7 +301,7 @@ function ConversationPage() {
                                     key={u.id}
                                     onClick={() => handleAddMember(u)}
                                     disabled={adding}
-                                    className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded disabled:opacity-40"
+                                    className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-sage-50 rounded disabled:opacity-40"
                                 >
                                     {u.username}
                                 </button>
@@ -342,8 +342,8 @@ function ConversationPage() {
                             <div
                                 className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm ${
                                     isMine
-                                        ? 'bg-purple-600 text-white rounded-br-sm'
-                                        : 'bg-white text-gray-800 border border-gray-200 rounded-bl-sm'
+                                        ? 'bg-mint-600 text-white rounded-br-sm'
+                                        : 'bg-white text-gray-800 border border-sage-200 rounded-bl-sm'
                                 }`}
                             >
                                 {m.content}
@@ -354,19 +354,19 @@ function ConversationPage() {
                 <div ref={bottomRef} />
             </div>
 
-            <div className="bg-white border-t border-gray-200 px-4 py-3 max-w-md mx-auto w-full flex gap-2">
+            <div className="bg-white border-t border-sage-200 px-4 py-3 max-w-md mx-auto w-full flex gap-2">
                 <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                     placeholder="Message..."
-                    className="flex-1 border border-gray-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-400"
+                    className="flex-1 border border-sage-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-mint-400"
                 />
                 <button
                     onClick={handleSend}
                     disabled={sending || !input.trim()}
-                    className="text-purple-600 font-medium text-sm disabled:opacity-40 px-2"
+                    className="text-mint-600 font-medium text-sm disabled:opacity-40 px-2"
                 >
                     Send
                 </button>

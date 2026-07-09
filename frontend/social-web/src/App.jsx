@@ -10,21 +10,18 @@ import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/AuthContext'
 import UserSearch from './components/UserSearch'
 import NotificationBell from './components/NotificationBell'
-import MessageIcon from './components/MessageIcon'
-import SettingsMenu from './components/SettingsMenu'
 
-function ReelsIcon() {
+function ProfileIcon({ filled }) {
+    if (filled) {
+        return (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7Z" />
+            </svg>
+        )
+    }
     return (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="2" y="3" width="20" height="18" rx="3" />
-            <path d="M7 3v18M17 3v18M2 8h5M2 16h5M17 8h5M17 16h5" />
-        </svg>
-    )
-}
-
-function ProfileIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="8" r="4" />
             <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7" />
         </svg>
@@ -33,39 +30,43 @@ function ProfileIcon() {
 
 function Navbar() {
     const { isAuthenticated, username } = useAuth()
+    const location = useLocation()
+    const isProfileActive = location.pathname.startsWith(`/profile/${username}`)
+
     return (
-        <nav className="bg-white/90 backdrop-blur-sm border-b border-sage-100 px-5 py-3 grid grid-cols-3 items-center sticky top-0 z-40">
+        <nav className="bg-white/90 backdrop-blur-sm border-b border-border-light px-6 py-5 grid grid-cols-3 items-center sticky top-0 z-40">
             <div className="flex items-center gap-2 justify-self-start">
-                <Link to="/" className="font-display font-semibold text-lg text-mint-600 tracking-tight mr-3">
+                <Link to="/" className="font-display font-semibold text-2xl text-sunset-600 tracking-tight">
                     social-api
                 </Link>
-                {isAuthenticated && (
-                    <Link
-                        to="/reels"
-                        className="flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-mint-600 transition-colors px-3 py-1.5 rounded-full hover:bg-mint-100"
-                    >
-                        <ReelsIcon />
-                        Reels
-                    </Link>
-                )}
             </div>
             {isAuthenticated && (
-                <div className="justify-self-center w-full">
+                <div className="justify-self-center w-full max-w-3xl">
                     <UserSearch />
                 </div>
             )}
             {isAuthenticated && (
-                <div className="flex items-center gap-3 justify-self-end">
-                    <MessageIcon />
-                    <NotificationBell />
+                <div className="flex items-center gap-4 justify-self-end">
+                    <span className="scale-110">
+                        <NotificationBell />
+                    </span>
                     <Link
                         to={`/profile/${username}`}
-                        className="flex items-center gap-1.5 text-sm font-medium text-ink-500 hover:text-mint-600 transition-colors px-3 py-1.5 rounded-full hover:bg-mint-100"
+                        className={`flex items-center gap-2 text-base font-medium transition-colors duration-150 ${
+                            isProfileActive ? 'text-pink-600' : 'text-ink-500 hover:text-ink-900'
+                        }`}
                     >
-                        <ProfileIcon />
-                        {username}
+                        <ProfileIcon filled={isProfileActive} />
+                        <span
+                            className={
+                                isProfileActive
+                                    ? 'bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent'
+                                    : ''
+                            }
+                        >
+                            {username}
+                        </span>
                     </Link>
-                    <SettingsMenu />
                 </div>
             )}
         </nav>

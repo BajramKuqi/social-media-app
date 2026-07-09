@@ -41,17 +41,17 @@ function InboxPage() {
     }, [])
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center gap-3">
+        <div className="min-h-screen bg-sage-50">
+            <div className="bg-white border-b border-sage-200 px-4 py-3 flex items-center gap-3">
                 <Link to="/" className="text-gray-500 hover:text-gray-700 shrink-0" aria-label="Back to feed">
-                    ←
+                    ?
                 </Link>
                 <div className="flex-1">
                     <UserSearch mode="message" placeholder="Search to message..." />
                 </div>
                 <button
                     onClick={() => setShowCreateGroup(true)}
-                    className="text-sm font-medium text-purple-600 hover:text-purple-700 shrink-0"
+                    className="text-sm font-medium text-mint-600 hover:text-mint-700 shrink-0"
                 >
                     New Group
                 </button>
@@ -66,14 +66,14 @@ function InboxPage() {
                     </p>
                 )}
 
-                <div className="bg-white rounded-lg shadow overflow-hidden divide-y divide-gray-100">
+                <div className="bg-white rounded-lg shadow overflow-hidden divide-y divide-sage-100">
                     {conversations.map((c) => (
                         <Link
                             key={c.id}
                             to={`/messages/c/${c.id}`}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50"
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-sage-50"
                         >
-                            <div className="w-11 h-11 rounded-full overflow-hidden bg-purple-100 text-purple-600 flex items-center justify-center font-semibold shrink-0">
+                            <div className="w-11 h-11 rounded-full overflow-hidden bg-mint-100 text-mint-600 flex items-center justify-center font-semibold shrink-0">
                                 {c.avatarUrl ? (
                                     <img src={c.avatarUrl} alt={c.displayName} className="w-full h-full object-cover" />
                                 ) : (
@@ -90,7 +90,7 @@ function InboxPage() {
                             </div>
                             <div className="flex flex-col items-end gap-1 shrink-0">
                                 <span className="text-xs text-gray-400">{timeAgo(c.lastMessageAt)}</span>
-                                {c.unread && <span className="w-2 h-2 rounded-full bg-purple-600" />}
+                                {c.unread && <span className="w-2 h-2 rounded-full bg-mint-600" />}
                             </div>
                         </Link>
                     ))}
