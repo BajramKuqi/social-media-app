@@ -107,7 +107,7 @@ function HighlightViewer({ highlight, isOwner, onClose, onItemDeleted }) {
                                 <button
                                     onClick={handleDelete}
                                     disabled={deleting}
-                                    className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-sage-50 disabled:opacity-50 transition-colors"
+                                    className="w-full text-left px-4 py-2.5 text-sm font-medium text-clay-500 hover:bg-sage-50 disabled:opacity-50 transition-colors"
                                 >
                                     {deleting ? 'Removing...' : 'Remove from Highlight'}
                                 </button>
@@ -127,7 +127,7 @@ function HighlightViewer({ highlight, isOwner, onClose, onItemDeleted }) {
                 {stories.map((s, idx) => (
                     <div key={s.itemId} className="flex-1 h-1 bg-white/30 rounded-full overflow-hidden">
                         <div
-                            className="h-full bg-insta-blue transition-none"
+                            className="h-full bg-white transition-none"
                             style={{
                                 width:
                                     idx < storyIndex ? '100%' : idx === storyIndex ? `${progress}%` : '0%',

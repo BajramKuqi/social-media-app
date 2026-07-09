@@ -102,12 +102,12 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
 
     return (
         <div className="fixed inset-0 bg-ink-800/50 z-50 flex items-center justify-center px-4">
-            <div className="bg-white rounded-2xl w-full max-w-sm max-h-[70vh] flex flex-col border border-mint-100">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-mint-100">
+            <div className="bg-white rounded-2xl w-full max-w-sm max-h-[70vh] flex flex-col border border-border-light overflow-hidden">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-border-light">
                     <span className="font-display font-semibold text-ink-800">{title}</span>
                     <button
                         onClick={onClose}
-                        className="text-ink-500 hover:text-mint-600 transition-colors"
+                        className="text-ink-500 hover:text-sunset-600 transition-colors"
                     >
                         <CloseIcon />
                     </button>
@@ -136,7 +136,7 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
                                         onClick={onClose}
                                         className="flex items-center gap-3 flex-1 min-w-0"
                                     >
-                                        <div className="w-10 h-10 rounded-full overflow-hidden bg-mint-100 text-mint-600 flex items-center justify-center font-semibold shrink-0 font-display">
+                                        <div className="w-10 h-10 rounded-full overflow-hidden bg-sage-100 text-sunset-600 flex items-center justify-center font-semibold shrink-0 font-display">
                                             {u.avatarUrl ? (
                                                 <img
                                                     src={u.avatarUrl}
@@ -168,7 +168,7 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
                                                 className={`px-3 py-1.5 rounded-full text-xs font-medium disabled:opacity-50 shrink-0 transition-colors ${
                                                     u.followedByCurrentUser
                                                         ? 'bg-sage-100 text-ink-800 border border-sage-100 hover:bg-sage-50'
-                                                        : 'bg-mint-500 text-white hover:bg-mint-600'
+                                                        : 'story-ring text-white hover:glow-story'
                                                 }`}
                                             >
                                                 {isBusy ? '...' : u.followedByCurrentUser ? 'Following' : 'Follow'}
@@ -181,7 +181,7 @@ function FollowListModal({ userId, mode, isOwnProfile, onClose, onCountChange })
                     {!loading && hasMore && (
                         <button
                             onClick={handleLoadMore}
-                            className="w-full text-sm text-mint-600 font-medium py-3 hover:bg-sage-50 transition-colors"
+                            className="w-full text-sm text-sunset-600 font-medium py-3 hover:bg-sage-50 transition-colors"
                         >
                             Load more
                         </button>
