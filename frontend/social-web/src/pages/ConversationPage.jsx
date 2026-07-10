@@ -18,6 +18,14 @@ import {
 
 const POLL_INTERVAL_MS = 3000
 
+function BackIcon() {
+    return (
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 18l-6-6 6-6" />
+        </svg>
+    )
+}
+
 function ConversationPage() {
     const { conversationId, userId } = useParams()
     const { username } = useAuth()
@@ -220,70 +228,74 @@ function ConversationPage() {
 
     return (
         <div className="min-h-screen bg-sage-50 flex flex-col">
-            <div className="bg-white border-b border-sage-200 px-4 py-3 flex items-center gap-3">
-                <button onClick={() => navigate('/messages')} className="text-gray-500 hover:text-gray-700">
-                    ?
-                </button>
-                <span className="font-medium text-gray-800 flex-1 font-display">{headerName || 'Conversation'}</span>
-                {resolvedConversationId && (
-                    <div className="relative">
-                        <button onClick={() => setShowMenu((prev) => !prev)} className="text-gray-500 hover:text-gray-700 px-2">
-                            ?
-                        </button>
-                        {showMenu && (
-                            <>
-                                <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-                                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg overflow-hidden w-44 z-20">
-                                    {isGroupChat && (
+            <div className="bg-white border-b border-sage-200 px-4 py-3 grid grid-cols-3 items-center">
+                <div className="justify-self-start">
+                    <button onClick={() => navigate('/messages')} className="text-ink-500 hover:text-sunset-600 transition-colors">
+                        <BackIcon />
+                    </button>
+                </div>
+                <span className="font-medium text-ink-800 font-display justify-self-center truncate">{headerName || 'Conversation'}</span>
+                <div className="justify-self-end">
+                    {resolvedConversationId && (
+                        <div className="relative">
+                            <button onClick={() => setShowMenu((prev) => !prev)} className="text-ink-500 hover:text-ink-700 px-2">
+                                &#8942;
+                            </button>
+                            {showMenu && (
+                                <>
+                                    <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
+                                    <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg overflow-hidden w-44 z-20 border border-sage-100">
+                                        {isGroupChat && (
+                                            <button
+                                                onClick={() => {
+                                                    setShowMenu(false)
+                                                    setShowAddMember(true)
+                                                }}
+                                                className="w-full text-left px-4 py-2.5 text-sm text-ink-700 hover:bg-sage-50"
+                                            >
+                                                Add people
+                                            </button>
+                                        )}
+                                        {isGroupChat && (
+                                            <button
+                                                onClick={() => {
+                                                    setShowMenu(false)
+                                                    handleExitGroup()
+                                                }}
+                                                className="w-full text-left px-4 py-2.5 text-sm text-ink-700 hover:bg-sage-50"
+                                            >
+                                                Exit group
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => {
                                                 setShowMenu(false)
-                                                setShowAddMember(true)
+                                                handleDeleteConversation()
                                             }}
-                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-sage-50"
+                                            className="w-full text-left px-4 py-2.5 text-sm text-clay-500 hover:bg-sage-50"
                                         >
-                                            Add people
+                                            Delete chat
                                         </button>
-                                    )}
-                                    {isGroupChat && (
-                                        <button
-                                            onClick={() => {
-                                                setShowMenu(false)
-                                                handleExitGroup()
-                                            }}
-                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-sage-50"
-                                        >
-                                            Exit group
-                                        </button>
-                                    )}
-                                    <button
-                                        onClick={() => {
-                                            setShowMenu(false)
-                                            handleDeleteConversation()
-                                        }}
-                                        className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-sage-50"
-                                    >
-                                        Delete chat
-                                    </button>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                )}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
 
             {showAddMember && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-                    <div className="bg-white rounded-xl w-full max-w-sm p-4 flex flex-col gap-3">
+                <div className="fixed inset-0 bg-ink-800/60 z-50 flex items-center justify-center px-4">
+                    <div className="bg-white rounded-2xl w-full max-w-sm p-4 flex flex-col gap-3 border border-sage-100">
                         <div className="flex items-center justify-between">
-                            <span className="font-semibold text-gray-800 font-display">Add people</span>
+                            <span className="font-semibold text-ink-800 font-display">Add people</span>
                             <button
                                 onClick={() => {
                                     setShowAddMember(false)
                                     setAddQuery('')
                                     setAddResults([])
                                 }}
-                                className="text-gray-400 hover:text-gray-600 text-xl leading-none"
+                                className="text-ink-400 hover:text-ink-600 text-xl leading-none"
                             >
                                 &times;
                             </button>
@@ -293,7 +305,7 @@ function ConversationPage() {
                             value={addQuery}
                             onChange={(e) => setAddQuery(e.target.value)}
                             placeholder="Search users..."
-                            className="border border-sage-200 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-mint-400"
+                            className="border border-sage-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sunset-500/30"
                         />
                         <div className="max-h-56 overflow-y-auto flex flex-col">
                             {addResults.map((u) => (
@@ -301,29 +313,29 @@ function ConversationPage() {
                                     key={u.id}
                                     onClick={() => handleAddMember(u)}
                                     disabled={adding}
-                                    className="text-left px-3 py-2 text-sm text-gray-700 hover:bg-sage-50 rounded disabled:opacity-40"
+                                    className="text-left px-3 py-2 text-sm text-ink-700 hover:bg-sage-50 rounded-lg disabled:opacity-40"
                                 >
                                     {u.username}
                                 </button>
                             ))}
                             {addQuery.trim() && addResults.length === 0 && (
-                                <p className="text-gray-400 text-sm px-3 py-2">No users found</p>
+                                <p className="text-ink-400 text-sm px-3 py-2">No users found</p>
                             )}
                         </div>
                     </div>
                 </div>
             )}
 
-            <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2 max-w-md mx-auto w-full">
-                {loading && <p className="text-gray-400 text-center py-6">Loading...</p>}
-                {error && <p className="text-red-500 text-center py-6">{error}</p>}
+            <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-2 w-full">
+                {loading && <p className="text-ink-400 text-center py-6">Loading...</p>}
+                {error && <p className="text-clay-500 text-center py-6">{error}</p>}
                 {!loading && !error && messages.length === 0 && (
-                    <p className="text-gray-400 text-center py-10">Say hello ?</p>
+                    <p className="text-ink-400 text-center py-10">Say hello 👋</p>
                 )}
                 {messages.map((m) => {
                     if (m.type === 'SYSTEM') {
                         return (
-                            <div key={m.id} className="text-center text-xs text-gray-400 my-1">
+                            <div key={m.id} className="text-center text-xs text-ink-400 my-1">
                                 {m.content}
                             </div>
                         )
@@ -334,7 +346,7 @@ function ConversationPage() {
                             {isMine && (
                                 <button
                                     onClick={() => handleDeleteMessage(m.id)}
-                                    className="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-red-500 text-xs transition-opacity"
+                                    className="opacity-0 group-hover:opacity-100 text-ink-300 hover:text-clay-500 text-xs transition-opacity"
                                 >
                                     delete
                                 </button>
@@ -342,8 +354,8 @@ function ConversationPage() {
                             <div
                                 className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm ${
                                     isMine
-                                        ? 'bg-mint-600 text-white rounded-br-sm'
-                                        : 'bg-white text-gray-800 border border-sage-200 rounded-bl-sm'
+                                        ? 'bg-sunset-600 text-white rounded-br-sm'
+                                        : 'bg-white text-ink-800 border border-sage-200 rounded-bl-sm'
                                 }`}
                             >
                                 {m.content}
@@ -354,19 +366,19 @@ function ConversationPage() {
                 <div ref={bottomRef} />
             </div>
 
-            <div className="bg-white border-t border-sage-200 px-4 py-3 max-w-md mx-auto w-full flex gap-2">
+            <div className="bg-white border-t border-sage-200 px-6 py-3 w-full flex gap-2">
                 <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                     placeholder="Message..."
-                    className="flex-1 border border-sage-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-mint-400"
+                    className="flex-1 border border-sage-200 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sunset-500/30"
                 />
                 <button
                     onClick={handleSend}
                     disabled={sending || !input.trim()}
-                    className="text-mint-600 font-medium text-sm disabled:opacity-40 px-2"
+                    className="text-sunset-600 font-medium text-sm disabled:opacity-40 px-2"
                 >
                     Send
                 </button>

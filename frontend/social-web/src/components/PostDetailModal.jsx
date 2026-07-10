@@ -36,7 +36,7 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
     const [likeCount, setLikeCount] = useState(post.likeCount)
     const [likeBusy, setLikeBusy] = useState(false)
 
-    const [tab, setTab] = useState('comments') // 'comments' | 'likes'
+    const [tab, setTab] = useState('comments')
 
     const [comments, setComments] = useState([])
     const [commentsLoading, setCommentsLoading] = useState(true)
@@ -153,8 +153,8 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
 
     return (
         <div className="fixed inset-0 bg-ink-800/60 flex items-center justify-center z-50 px-4">
-            <div className="bg-white rounded-2xl shadow-lg w-full max-w-3xl h-[80vh] flex overflow-hidden border border-mint-100">
-                {/* Left: image */}
+            <div className="bg-white rounded-2xl shadow-lg w-full max-w-3xl h-[80vh] flex overflow-hidden border border-sage-100">
+                {}
                 <div className="w-1/2 bg-black flex items-center justify-center shrink-0">
                     <img
                         src={post.imageUrl}
@@ -163,26 +163,26 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
                     />
                 </div>
 
-                {/* Right: details */}
+                {}
                 <div className="w-1/2 flex flex-col">
-                    <div className="flex items-center justify-between px-4 py-3 border-b border-mint-100">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-sage-100">
                         <span className="font-medium text-ink-800">{post.authorUsername}</span>
                         <div className="flex items-center gap-3">
                             {isOwnPost && (
                                 <div className="relative">
                                     <button
                                         onClick={() => setShowMenu((prev) => !prev)}
-                                        className="text-ink-500 hover:text-mint-600 text-xl leading-none px-1"
+                                        className="text-ink-500 hover:text-sunset-600 text-xl leading-none px-1"
                                         aria-label="Post options"
                                     >
                                         &#8942;
                                     </button>
                                     {showMenu && (
-                                        <div className="absolute top-7 right-0 bg-white rounded-2xl shadow-lg overflow-hidden w-36 text-left z-10 border border-mint-100">
+                                        <div className="absolute top-7 right-0 bg-white rounded-2xl shadow-lg overflow-hidden w-36 text-left z-10 border border-sage-100">
                                             <button
                                                 onClick={handleDeletePost}
                                                 disabled={deletingPost}
-                                                className="w-full text-left px-4 py-2.5 text-sm text-clay-500 hover:bg-mint-100 disabled:opacity-50"
+                                                className="w-full text-left px-4 py-2.5 text-sm text-clay-500 hover:bg-sage-50 disabled:opacity-50"
                                             >
                                                 {deletingPost ? 'Deleting...' : 'Delete Post'}
                                             </button>
@@ -192,7 +192,7 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
                             )}
                             <button
                                 onClick={onClose}
-                                className="text-ink-500 hover:text-mint-600 transition-colors"
+                                className="text-ink-500 hover:text-sunset-600 transition-colors"
                             >
                                 <CloseIcon />
                             </button>
@@ -200,18 +200,18 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
                     </div>
 
                     {post.caption && (
-                        <p className="px-4 py-2 text-sm text-ink-800 border-b border-mint-100">
-                            <Link to={`/profile/${post.authorUsername}`} className="font-medium hover:text-mint-600">
+                        <p className="px-4 py-2 text-sm text-ink-800 border-b border-sage-100">
+                            <Link to={`/profile/${post.authorUsername}`} className="font-medium hover:text-sunset-600">
                                 {post.authorUsername}
                             </Link> {post.caption}
                         </p>
                     )}
 
-                    <div className="flex border-b border-mint-100">
+                    <div className="flex border-b border-sage-100">
                         <button
                             onClick={() => switchTab('comments')}
                             className={`flex-1 py-2 text-sm font-medium transition-colors ${
-                                tab === 'comments' ? 'text-mint-600 border-b-2 border-mint-500' : 'text-ink-500/60 hover:text-mint-600'
+                                tab === 'comments' ? 'text-sunset-600 border-b-2 border-sunset-500' : 'text-ink-500/60 hover:text-sunset-600'
                             }`}
                         >
                             Comments
@@ -219,7 +219,7 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
                         <button
                             onClick={() => switchTab('likes')}
                             className={`flex-1 py-2 text-sm font-medium transition-colors ${
-                                tab === 'likes' ? 'text-mint-600 border-b-2 border-mint-500' : 'text-ink-500/60 hover:text-mint-600'
+                                tab === 'likes' ? 'text-sunset-600 border-b-2 border-sunset-500' : 'text-ink-500/60 hover:text-sunset-600'
                             }`}
                         >
                             Likes · {likeCount}
@@ -238,7 +238,7 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
                                     return (
                                         <div key={comment.id} className="flex justify-between items-start text-sm mb-2">
                                             <p className="text-ink-800">
-                                                <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-mint-600">
+                                                <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-sunset-600">
                                                     {comment.authorUsername}
                                                 </Link>{' '}
                                                 {comment.content}
@@ -267,7 +267,7 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
                                     <Link
                                         key={i}
                                         to={`/profile/${liker.username}`}
-                                        className="block text-sm text-ink-800 mb-2 font-medium hover:text-mint-600"
+                                        className="block text-sm text-ink-800 mb-2 font-medium hover:text-sunset-600"
                                     >
                                         {liker.username}
                                     </Link>
@@ -276,12 +276,12 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
                         )}
                     </div>
 
-                    <div className="border-t border-mint-100 px-4 py-3 flex flex-col gap-2">
+                    <div className="border-t border-sage-100 px-4 py-3 flex flex-col gap-2">
                         <button
                             onClick={handleLikeToggle}
                             disabled={likeBusy}
                             className={`flex items-center gap-1.5 text-sm font-medium w-fit rounded-full px-2 py-1 -ml-2 transition-all disabled:opacity-50 ${
-                                liked ? 'text-mint-600 glow-mint' : 'text-ink-500 hover:text-mint-600'
+                                liked ? 'text-sunset-600' : 'text-ink-500 hover:text-sunset-600'
                             }`}
                         >
                             <HeartIcon filled={liked} />
@@ -296,12 +296,12 @@ function PostDetailModal({ post, onClose, onPostDeleted }) {
                                     onChange={(e) => setNewComment(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
                                     placeholder="Add a comment..."
-                                    className="flex-1 min-w-0 border border-sage-100 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-mint-500/30"
+                                    className="flex-1 min-w-0 border border-sage-200 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-sunset-500/30"
                                 />
                                 <button
                                     onClick={handleAddComment}
                                     disabled={posting || !newComment.trim()}
-                                    className="text-mint-600 text-sm font-medium disabled:opacity-40 shrink-0 whitespace-nowrap"
+                                    className="text-sunset-600 text-sm font-medium disabled:opacity-40 shrink-0 whitespace-nowrap"
                                 >
                                     Post
                                 </button>

@@ -102,20 +102,31 @@ function ReelsPage() {
 
             <div className="flex-1 flex justify-center px-6 py-6">
                 <div className="w-full max-w-3xl flex flex-col gap-4">
-                    <div className="flex items-center justify-between">
-                        <h1 className="text-lg font-display font-semibold text-ink-800">Reels</h1>
-                        <button
-                            onClick={() => setShowCreateModal(true)}
-                            className="bg-mint-500 text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-mint-600 transition-colors shadow-sm"
-                        >
-                            + New Reel
-                        </button>
-                    </div>
+                    <button
+                        onClick={() => setShowCreateModal(true)}
+                        className="flex items-center gap-3 bg-white border border-sage-200 rounded-2xl px-4 py-3 shadow-sm hover:shadow-md transition-shadow text-left"
+                    >
+                        <span className="flex-1 text-ink-400 text-sm">
+                            Share a new reel
+                        </span>
+                        <span className="flex items-center justify-center w-9 h-9 rounded-full bg-sunset-50 text-sunset-600">
+                            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="2" y="5" width="15" height="14" rx="2" />
+                                <path d="M17 9.5 22 7v10l-5-2.5" />
+                            </svg>
+                        </span>
+                    </button>
+
                     {loading && <p className="text-ink-500 text-center">Loading...</p>}
                     {error && <p className="text-clay-500 text-center">{error}</p>}
                     {!loading && !error && reels.length === 0 && (
-                        <p className="text-ink-500 text-center">No reels yet.</p>
+                        <div className="bg-white border border-sage-200 rounded-2xl px-5 py-4 text-center">
+                            <p className="text-ink-500 text-sm">
+                                Currently, there are no reels available. Would you like to create the first one?
+                            </p>
+                        </div>
                     )}
+
                     {reels.map((reel) => (
                         <ReelCard key={reel.id} reel={reel} />
                     ))}

@@ -31,6 +31,7 @@ function ReelCard({ reel }) {
     const [liked, setLiked] = useState(reel.likedByCurrentUser)
     const [likeCount, setLikeCount] = useState(reel.likeCount)
     const [busy, setBusy] = useState(false)
+    const [justLiked, setJustLiked] = useState(false)
 
     const [showComments, setShowComments] = useState(false)
     const [comments, setComments] = useState([])
@@ -55,6 +56,8 @@ function ReelCard({ reel }) {
                 await likeReel(reel.id)
                 setLiked(true)
                 setLikeCount((prev) => prev + 1)
+                setJustLiked(true)
+                setTimeout(() => setJustLiked(false), 300)
             }
         } catch (err) {
             console.error('Failed to toggle like', err)
@@ -133,7 +136,7 @@ function ReelCard({ reel }) {
                 />
                 {!isPlaying && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="bg-mint-600/40 rounded-full p-4">
+                        <div className="bg-black/40 rounded-full p-4">
                             <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M8 5v14l11-7z" />
                             </svg>
@@ -147,15 +150,17 @@ function ReelCard({ reel }) {
                         onClick={handleLikeToggle}
                         disabled={busy}
                         className={`flex items-center gap-1.5 text-sm font-medium rounded-full px-2 py-1 -ml-2 transition-all disabled:opacity-50 ${
-                            liked ? 'text-mint-600 glow-mint' : 'text-ink-500 hover:text-mint-600'
+                            liked ? 'text-red-500' : 'text-ink-500 hover:text-red-400'
                         }`}
                     >
-                        <HeartIcon filled={liked} />
+                        <span className={`inline-flex transition-transform duration-300 ${justLiked ? 'scale-125' : 'scale-100'}`}>
+                            <HeartIcon filled={liked} />
+                        </span>
                         {likeCount}
                     </button>
                     <button
                         onClick={toggleComments}
-                        className="flex items-center gap-1.5 text-sm text-ink-500 hover:text-mint-600"
+                        className="flex items-center gap-1.5 text-sm text-ink-500 hover:text-black"
                     >
                         <CommentIcon />
                         {commentCount}
@@ -172,14 +177,14 @@ function ReelCard({ reel }) {
                 )}
 
                 {showComments && (
-                    <div className="mt-2 flex flex-col gap-2 border-t border-mint-100 pt-2">
+                    <div className="mt-2 flex flex-col gap-2 border-t border-black/20 pt-2">
                         {comments.length === 0 && (
                             <p className="text-ink-500/60 text-sm">No comments yet.</p>
                         )}
                         {comments.map((comment) => (
                             <div key={comment.id} className="flex justify-between items-start text-sm">
                                 <p className="text-ink-800">
-                                    <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-mint-600">
+                                    <Link to={`/profile/${comment.authorUsername}`} className="font-medium hover:text-black">
                                         {comment.authorUsername}
                                     </Link>{' '}
                                     {comment.content}
@@ -202,12 +207,12 @@ function ReelCard({ reel }) {
                                 onChange={(e) => setNewComment(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleAddComment()}
                                 placeholder="Add a comment..."
-                                className="flex-1 min-w-0 border border-sage-100 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-mint-500/30"
+                                className="flex-1 border border-black/20 rounded-full px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/30"
                             />
                             <button
                                 onClick={handleAddComment}
                                 disabled={posting || !newComment.trim()}
-                                className="text-mint-600 text-sm font-medium disabled:opacity-40 px-2 shrink-0"
+                                className="text-black text-sm font-medium disabled:opacity-40 px-2"
                             >
                                 Post
                             </button>
