@@ -34,10 +34,31 @@ function Navbar() {
     const isProfileActive = location.pathname.startsWith(`/profile/${username}`)
 
     return (
-        <nav className="bg-white/90 backdrop-blur-sm border-b border-border-light px-6 py-5 grid grid-cols-3 items-center sticky top-0 z-40">
+        <nav className="bg-white/90 backdrop-blur-sm border-b border-border-light px-6 h-20 grid grid-cols-3 items-center sticky top-0 z-40">
             <div className="flex items-center gap-2 justify-self-start">
-                <Link to="/" className="font-display font-semibold text-2xl text-sunset-600 tracking-tight">
-                    social-api
+                <Link to="/" className="flex items-center gap-2">
+                    <svg width="28" height="28" viewBox="0 0 64 68" fill="none">
+                        <defs>
+                            <linearGradient id="oraGradientNav" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stopColor="var(--color-sunset-500)" />
+                                <stop offset="100%" stopColor="var(--color-plum-500)" />
+                            </linearGradient>
+                        </defs>
+                        <rect x="4" y="0" width="56" height="8" rx="4" fill="url(#oraGradientNav)" />
+                        <rect x="4" y="60" width="56" height="8" rx="4" fill="url(#oraGradientNav)" />
+                        <path
+                            d="M10 8 C10 24 30 28 30 34 C30 40 10 44 10 60 L54 60 C54 44 34 40 34 34 C34 28 54 24 54 8 Z"
+                            fill="none"
+                            stroke="url(#oraGradientNav)"
+                            strokeWidth="4"
+                            strokeLinejoin="round"
+                        />
+                        <path d="M16 14 C18 24 28 27 30 32 C32 27 42 24 44 14 Z" fill="url(#oraGradientNav)" opacity="0.85" />
+                        <path d="M17 54 C19 46 28 41 30 36 C32 41 41 46 43 54 Z" fill="url(#oraGradientNav)" opacity="0.55" />
+                    </svg>
+                    <span className="font-display font-semibold text-2xl text-sunset-600 tracking-tight">
+                        Ora
+                    </span>
                 </Link>
             </div>
             {isAuthenticated && (

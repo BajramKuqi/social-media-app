@@ -1,11 +1,9 @@
 import { useRef, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-
 function SettingsMenu() {
     const { logoutUser } = useAuth()
     const [isOpen, setIsOpen] = useState(false)
     const containerRef = useRef(null)
-
     return (
         <div className="relative w-full" ref={containerRef}>
             <button
@@ -31,7 +29,7 @@ function SettingsMenu() {
             {isOpen && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-                    <div className="absolute left-0 bottom-full mb-2 w-44 bg-white rounded-2xl shadow-lg overflow-hidden z-20 border border-sage-200">
+                    <div className="absolute left-0 top-full mt-2 w-44 bg-white rounded-2xl shadow-lg overflow-hidden z-20 border border-sage-200">
                         <button
                             onClick={() => {
                                 setIsOpen(false)
@@ -47,5 +45,4 @@ function SettingsMenu() {
         </div>
     )
 }
-
 export default SettingsMenu

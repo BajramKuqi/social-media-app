@@ -24,18 +24,23 @@ function RegisterPage() {
     }
   }
   return (
-      <div className="min-h-screen bg-sage-50 flex items-center justify-center px-4">
-        <div className="w-full max-w-sm bg-white rounded-lg shadow p-6">
-          <h1 className="text-2xl font-semibold text-gray-800 mb-6 text-center font-display">
-            Create account
+      <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-pink-100 to-purple-100 flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="absolute top-1/4 -left-24 w-72 h-72 bg-pink-400/30 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -right-24 w-72 h-72 bg-purple-400/30 rounded-full blur-3xl" />
+        <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg border border-white/60 p-8 relative">
+          <h1 className="text-3xl font-semibold text-ink-900 mb-1 text-center font-display">
+            social-api
           </h1>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <p className="text-sm text-ink-400 mb-6 text-center">
+            Create an account to get started
+          </p>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <input
                 type="text"
                 placeholder="Username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="border border-sage-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-mint-400"
+                className="border border-sage-200 rounded-xl px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-sunset-400 focus:border-transparent transition-shadow"
                 required
             />
             <input
@@ -43,7 +48,7 @@ function RegisterPage() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="border border-sage-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-mint-400"
+                className="border border-sage-200 rounded-xl px-4 py-2.5 text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-sunset-400 focus:border-transparent transition-shadow"
                 required
             />
             <div className="relative">
@@ -52,31 +57,31 @@ function RegisterPage() {
                   placeholder="Password (min 8 characters)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="border border-sage-300 rounded px-3 py-2 pr-10 w-full focus:outline-none focus:ring-2 focus:ring-mint-400"
+                  className="border border-sage-200 rounded-xl px-4 py-2.5 pr-14 w-full text-sm text-ink-900 placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-sunset-400 focus:border-transparent transition-shadow"
                   required
                   minLength={8}
               />
               <button
                   type="button"
                   onClick={() => setShowPassword((prev) => !prev)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-sm"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-400 hover:text-sunset-600 text-xs font-medium transition-colors"
                   tabIndex={-1}
               >
                 {showPassword ? 'Hide' : 'Show'}
               </button>
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {error && <p className="text-clay-500 text-sm">{error}</p>}
             <button
                 type="submit"
                 disabled={loading}
-                className="bg-mint-600 text-white rounded px-3 py-2 font-medium hover:bg-mint-700 disabled:opacity-50"
+                className="bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white rounded-xl px-4 py-2.5 font-medium text-sm shadow-sm hover:shadow-md transition-shadow disabled:opacity-50 mt-1"
             >
               {loading ? 'Creating account...' : 'Register'}
             </button>
           </form>
-          <p className="text-sm text-gray-500 mt-4 text-center">
+          <p className="text-sm text-ink-400 mt-5 text-center">
             Already have an account?{' '}
-            <Link to="/login" className="text-mint-600 hover:underline">
+            <Link to="/login" className="text-sunset-600 font-medium hover:underline">
               Log in
             </Link>
           </p>

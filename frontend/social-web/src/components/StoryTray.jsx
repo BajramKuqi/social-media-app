@@ -16,7 +16,6 @@ function StoryTray() {
             const data = await getStoryFeed()
             setGroups(data)
         } catch (err) {
-            // silently fail for now, tray just won't show
         } finally {
             setLoading(false)
         }
@@ -35,7 +34,6 @@ function StoryTray() {
             await createStory(file, '', mediaType)
             await loadStories()
         } catch (err) {
-            // could add error toast here
         } finally {
             setUploading(false)
             e.target.value = ''
@@ -108,11 +106,19 @@ function StoryTray() {
                                 : 'bg-sage-100'
                         }`}
                     >
-                        <img
-                            src={group.authorAvatarUrl || '/default-avatar.png'}
-                            alt={group.authorUsername}
-                            className="w-full h-full rounded-full object-cover border-2 border-white"
-                        />
+                        <div className="w-full h-full rounded-full border-2 border-white overflow-hidden">
+                            {group.authorAvatarUrl ? (
+                                <img
+                                    src={group.authorAvatarUrl}
+                                    alt={group.authorUsername}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-sunset-400 to-plum-500 text-white text-lg font-semibold">
+                                    {group.authorUsername?.charAt(0).toUpperCase()}
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <span className="text-xs text-ink-500 truncate w-16 text-center">
             {group.authorUsername === username ? 'You' : group.authorUsername}

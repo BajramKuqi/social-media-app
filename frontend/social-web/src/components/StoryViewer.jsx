@@ -339,11 +339,19 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
         </div>
 
         <div className="absolute top-8 left-2 flex items-center gap-2 z-10">
-          <img
-              src={currentGroup.authorAvatarUrl || '/default-avatar.png'}
-              alt={currentGroup.authorUsername}
-              className="w-8 h-8 rounded-full object-cover"
-          />
+          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+            {currentGroup.authorAvatarUrl ? (
+                <img
+                    src={currentGroup.authorAvatarUrl}
+                    alt={currentGroup.authorUsername}
+                    className="w-full h-full object-cover"
+                />
+            ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-sunset-400 to-plum-500 text-white text-xs font-semibold">
+                  {currentGroup.authorUsername?.charAt(0).toUpperCase()}
+                </div>
+            )}
+          </div>
           <span className="text-white text-sm font-medium">
           {currentGroup.authorUsername}
         </span>
@@ -418,11 +426,19 @@ function StoryViewer({ groups, startIndex, onClose, onStoryViewed, onStoryDelete
                             key={v.viewerId}
                             className="flex items-center gap-3 px-4 py-2"
                         >
-                          <img
-                              src={v.viewerAvatarUrl || '/default-avatar.png'}
-                              alt={v.viewerUsername}
-                              className="w-8 h-8 rounded-full object-cover"
-                          />
+                          <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                            {v.viewerAvatarUrl ? (
+                                <img
+                                    src={v.viewerAvatarUrl}
+                                    alt={v.viewerUsername}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-sunset-400 to-plum-500 text-white text-xs font-semibold">
+                                  {v.viewerUsername?.charAt(0).toUpperCase()}
+                                </div>
+                            )}
+                          </div>
                           <span className="text-sm text-ink-800">
                     {v.viewerUsername}
                   </span>
