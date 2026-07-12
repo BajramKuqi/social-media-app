@@ -28,9 +28,32 @@ function RegisterPage() {
         <div className="absolute top-1/4 -left-24 w-72 h-72 bg-pink-400/30 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 -right-24 w-72 h-72 bg-purple-400/30 rounded-full blur-3xl" />
         <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg border border-white/60 p-8 relative">
-          <h1 className="text-3xl font-semibold text-ink-900 mb-1 text-center font-display">
-            social-api
-          </h1>
+          <div className="flex flex-col items-center mb-1">
+            <svg viewBox="0 0 100 100" className="w-14 h-14 mb-2">
+              <defs>
+                <linearGradient id="registerLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#fb923c" />
+                  <stop offset="100%" stopColor="#7e22ce" />
+                </linearGradient>
+              </defs>
+              <path
+                  d="M28 12 H72 C72 12 72 28 50 50 C72 72 72 88 72 88 H28 C28 88 28 72 50 50 C28 28 28 12 28 12 Z"
+                  fill="none"
+                  stroke="url(#registerLogoGradient)"
+                  strokeWidth="6"
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+              />
+              <path
+                  d="M50 50 L36 68 H64 Z"
+                  fill="url(#registerLogoGradient)"
+                  opacity="0.85"
+              />
+            </svg>
+            <h1 className="text-3xl font-semibold text-ink-900 text-center font-display">
+              Ora
+            </h1>
+          </div>
           <p className="text-sm text-ink-400 mb-6 text-center">
             Create an account to get started
           </p>
