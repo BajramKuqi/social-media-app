@@ -10,4 +10,4 @@ frontend/dist/
 
 .idea/
 .vscode/
-*.iml
+*.iml.env
